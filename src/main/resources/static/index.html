@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noox Fit - Fitness Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body class="bg-dark text-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">NOOX FIT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="login.html" class="btn btn-outline-light me-2">Login</a>
+                    <a href="register.html" class="btn btn-primary">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section text-center">
+        <div class="container">
+            <h1>Transform Your Fitness Journey</h1>
+            <p class="lead">Track your workouts, set goals, and achieve results with Noox Fit</p>
+            <a href="register.html" class="btn btn-primary btn-lg">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5 bg-dark">
+        <div class="container">
+            <h2 class="text-center mb-5 text-light">Features</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 bg-dark-subtle text-light border-secondary">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Workout Tracking</h3>
+                            <p class="card-text">Log your exercises, sets, reps, and weights to monitor your progress.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 bg-dark-subtle text-light border-secondary">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Custom Routines</h3>
+                            <p class="card-text">Create personalized workout routines tailored to your fitness goals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 bg-dark-subtle text-light border-secondary">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Progress Analytics</h3>
+                            <p class="card-text">Visualize your fitness journey with detailed charts and statistics.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-5 bg-black">
+        <div class="container">
+            <h2 class="text-center mb-5 text-light">About Us</h2>
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="./img/cbum.png" alt="About Noox Fit" class="img-fluid rounded">
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="text-light">Our Mission</h3>
+                    <p class="text-light-emphasis">At Noox Fit, we believe that fitness should be accessible to everyone. Our mission is to provide a simple yet powerful tool to help you track your fitness journey and achieve your goals.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-dark">
+        <div class="container">
+            <h2 class="text-center mb-5 text-light">Contact Us</h2>
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label text-light">Name</label>
+                            <input type="text" class="form-control bg-dark-subtle text-light border-secondary" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label text-light">Email</label>
+                            <input type="email" class="form-control bg-dark-subtle text-light border-secondary" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label text-light">Message</label>
+                            <textarea class="form-control bg-dark-subtle text-light border-secondary" id="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>NOOX FIT</h5>
+                    <p>Your ultimate fitness tracking solution.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home" class="text-light">Home</a></li>
+                        <li><a href="#features" class="text-light">Features</a></li>
+                        <li><a href="#about" class="text-light">About Us</a></li>
+                        <li><a href="#contact" class="text-light">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Follow Us</h5>
+                    <div class="d-flex">
+                        <a href="#" class="text-light me-2">Facebook</a>
+                        <a href="#" class="text-light me-2">Twitter</a>
+                        <a href="#" class="text-light">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <div class="text-center">
+                <p>&copy; 2023 Noox Fit. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

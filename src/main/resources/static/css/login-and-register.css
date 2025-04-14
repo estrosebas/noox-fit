@@ -1,0 +1,30 @@
+body {
+    background-color: #121212;
+    color: white;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    background-color: #1f1f1f;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+.modal-content {
+    border: 1px solid #444;
+}
+
+.form-switch {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.form-switch a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.form-switch a:hover {
+    text-decoration: underline;
+}
