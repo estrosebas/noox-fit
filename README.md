@@ -85,9 +85,8 @@ Para ejecutar los tests:
 
 ## ✨ Autor
 
-Diego Sebastian Gonzales Gomez
-Neftalí Pacco Moscoso
-Eduardo Sebastian Luque Macedo
----
+- Diego Sebastian Gonzales Gomez
+- Neftalí Pacco Moscoso
+- Eduardo Sebastian Luque Macedo
 
 ⌨️ con ❤️ por el equipo.
