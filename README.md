@@ -13,7 +13,6 @@ Un sistema de seguimiento de fitness desarrollado con Spring Boot que permite a 
 
 - **Backend**: Spring Boot
 - **Frontend**: HTML, CSS, JavaScript
-- **Base de Datos**: [Tu base de datos]
 - **Build Tool**: Gradle
 
 ## 📋 Prerrequisitos
