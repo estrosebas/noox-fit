@@ -2,21 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Viewport meta tag para hacer la página responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noox Fit - Fitness Tracker</title>
+    <!-- CDN de Bootstrap CSS v5.3.2 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/index.css">
 </head>
+<!-- Clases de Bootstrap para fondo oscuro y texto claro -->
 <body class="bg-dark text-light">
-    <!-- Navbar -->
+    <!-- Navbar: barra de navegación oscura expandible en pantallas grandes -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+        <!-- Container: mantiene el contenido centrado y con márgenes -->
         <div class="container">
+            <!-- Navbar-brand: logo o nombre de la marca -->
             <a class="navbar-brand" href="index.html">NOOX FIT</a>
+            <!-- Botón hamburguesa para menú móvil -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Contenedor colapsable para los elementos de navegación -->
             <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Lista de navegación con margen automático a la derecha -->
                 <ul class="navbar-nav me-auto">
+                    <!-- Elementos de navegación con estados activo/inactivo -->
                     <li class="nav-item">
                         <a class="nav-link active" href="#home">Home</a>
                     </li>
@@ -30,29 +39,38 @@
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
                 </ul>
+                <!-- Contenedor flex para los botones de login/register -->
                 <div class="d-flex">
+                    <!-- Botón outline con margen a la derecha -->
                     <a href="login.html" class="btn btn-outline-light me-2">Login</a>
+                    <!-- Botón primario -->
                     <a href="register.html" class="btn btn-primary">Register</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Sección hero con texto centrado -->
     <section id="home" class="hero-section text-center">
+        <!-- Container para mantener el contenido centrado -->
         <div class="container">
             <h1>Transform Your Fitness Journey</h1>
+            <!-- Clase lead para párrafo destacado -->
             <p class="lead">Track your workouts, set goals, and achieve results with Noox Fit</p>
+            <!-- Botón grande primario -->
             <a href="register.html" class="btn btn-primary btn-lg">Get Started</a>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Sección de características con padding y fondo oscuro -->
     <section id="features" class="py-5 bg-dark">
+        <!-- Container para mantener el contenido centrado -->
         <div class="container">
             <h2 class="text-center mb-5 text-light">Features</h2>
             <div class="row">
+                <!-- Columna de características con margen inferior -->
                 <div class="col-md-4 mb-4">
+                    <!-- Tarjeta con fondo oscuro sutil, texto claro y borde secundario -->
                     <div class="card h-100 bg-dark-subtle text-light border-secondary">
                         <div class="card-body text-center">
                             <h3 class="card-title">Workout Tracking</h3>
@@ -80,11 +98,13 @@
         </div>
     </section>
 
-    <!-- About Us Section -->
+    <!-- Sección sobre nosotros con padding y fondo negro -->
     <section id="about" class="py-5 bg-black">
+        <!-- Container para mantener el contenido centrado -->
         <div class="container">
             <h2 class="text-center mb-5 text-light">About Us</h2>
             <div class="row align-items-center">
+                <!-- Columna con imagen redondeada -->
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <img src="./img/cbum.png" alt="About Noox Fit" class="img-fluid rounded">
                 </div>
@@ -96,8 +116,9 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Sección de contacto con padding y fondo oscuro -->
     <section id="contact" class="py-5 bg-dark">
+        <!-- Container para mantener el contenido centrado -->
         <div class="container">
             <h2 class="text-center mb-5 text-light">Contact Us</h2>
             <div class="row">
@@ -122,8 +143,9 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer con fondo negro y texto blanco -->
     <footer class="bg-black text-white py-4">
+        <!-- Container para mantener el contenido centrado -->
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -154,6 +176,56 @@
             </div>
         </div>
     </footer>
+
+    <!-- Diccionario de clases Bootstrap utilizadas -->
+    <!-- 
+    Clases generales de Bootstrap utilizadas en esta página:
+
+    Contenedores y Layout:
+    - container: Contenedor responsivo con márgenes automáticos
+    - row: Fila del sistema grid de Bootstrap
+    - col-md-*: Columnas responsivas (md = medium devices)
+    
+    Utilidades de Espaciado:
+    - py-*: Padding vertical (top y bottom)
+    - my-*: Margin vertical
+    - mb-*: Margin bottom
+    - me-*: Margin end (derecha)
+    
+    Utilidades de Fondo y Texto:
+    - bg-dark: Fondo oscuro
+    - bg-black: Fondo negro
+    - text-light: Texto claro
+    - text-center: Alineación de texto al centro
+    
+    Componentes de Navegación:
+    - navbar: Barra de navegación
+    - navbar-expand-lg: Expansión de navbar en pantallas grandes
+    - navbar-dark: Tema oscuro para navbar
+    - nav-item: Elemento de navegación
+    - nav-link: Enlace de navegación
+    
+    Botones:
+    - btn: Clase base para botones
+    - btn-primary: Botón de color primario
+    - btn-outline-light: Botón con borde claro
+    - btn-lg: Botón grande
+    
+    Componentes de Tarjeta:
+    - card: Contenedor de tarjeta
+    - card-body: Cuerpo de la tarjeta
+    - card-title: Título de la tarjeta
+    - card-text: Texto de la tarjeta
+    
+    Utilidades Flex:
+    - d-flex: Display flex
+    - justify-content-center: Centrado horizontal
+    - align-items-center: Centrado vertical
+    
+    Utilidades de Borde:
+    - border-secondary: Borde de color secundario
+    - rounded-3: Bordes redondeados
+    -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
