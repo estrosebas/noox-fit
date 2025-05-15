@@ -1,71 +1,61 @@
 const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
-// Datos de ejercicios ampliados
-const ejercicios = [
-  {
-    nombre: "Push Ups",
-    descripcion: "Flexiones clásicas para trabajar el pecho y tríceps.",
-    hecho: false,
-    imagen: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop",
-    dia: "Lunes",
-    urlVideo: "https://www.youtube.com/embed/SCVCLChPQFY",
-    dificultad: "Intermedia",
-    instrucciones: [
-      "Colócate en posición de plancha con las manos a la altura de los hombros",
-      "Mantén el cuerpo recto y el core activado",
-      "Baja el cuerpo doblando los codos hasta casi tocar el suelo",
-      "Empuja hacia arriba hasta extender los brazos por completo",
-    ],
-  },
-  {
-    nombre: "Sentadillas",
-    descripcion: "Fortalece tus piernas y glúteos con este básico.",
-    hecho: true,
-    imagen: "https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?q=80&w=2069&auto=format&fit=crop",
-    dia: "Lunes",
-    urlVideo: "https://www.youtube.com/embed/YaXPRqUwItQ",
-    dificultad: "Básica",
-    instrucciones: [
-      "Colócate de pie con los pies separados al ancho de los hombros",
-      "Mantén la espalda recta y el pecho hacia adelante",
-      "Baja flexionando las rodillas como si fueras a sentarte",
-      "Regresa a la posición inicial empujando con los talones",
-    ],
-  },
-  {
-    nombre: "Plancha Abdominal",
-    descripcion: "Ejercicio isométrico para fortalecer el core y mejorar la estabilidad.",
-    hecho: false,
-    imagen: "https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=2070&auto=format&fit=crop",
-    dia: "Martes",
-    urlVideo: "https://www.youtube.com/embed/ASdvN_XEl_c",
-    dificultad: "Básica",
-    instrucciones: [
-      "Apóyate sobre los antebrazos y las puntas de los pies",
-      "Mantén el cuerpo recto formando una línea desde la cabeza hasta los talones",
-      "Contrae el abdomen y mantén la posición",
-      "Respira de manera constante durante todo el ejercicio",
-    ],
-  },
-  {
-    nombre: "Burpees",
-    descripcion: "Ejercicio de cuerpo completo de alta intensidad para mejorar la resistencia.",
-    hecho: false,
-    imagen: "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=2069&auto=format&fit=crop",
-    dia: "Miércoles",
-    urlVideo: "https://www.youtube.com/embed/TU8QYVW0gDU",
-    dificultad: "Avanzada",
-    instrucciones: [
-      "Comienza de pie con los pies separados al ancho de los hombros",
-      "Baja a posición de cuclillas y coloca las manos en el suelo",
-      "Salta llevando los pies hacia atrás quedando en posición de plancha",
-      "Haz una flexión, salta llevando los pies hacia las manos y salta hacia arriba",
-    ],
-  },
-]
+// Datos de ejercicios desde el backend
+let ejercicios = [];
+
+// Función para cargar los ejercicios desde el backend
+async function cargarEjercicios() {
+  try {
+    const response = await fetch('/api/exercises');
+    if (!response.ok) {
+      throw new Error('Error en la respuesta del servidor');
+    }
+    ejercicios = await response.json();
+    // Carga la vista inicial con los ejercicios
+    loadRutinaDia("Lunes");
+  } catch (error) {
+    console.error('Error al cargar los ejercicios:', error);
+  }
+}
+
+// Función para marcar un ejercicio como completado/incompleto
+async function toggleEjercicioStatus(nombre) {
+  try {
+    const response = await fetch(`/api/exercises/${nombre}/toggle`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      throw new Error('Error al actualizar el estado del ejercicio');
+    }
+    const ejercicioActualizado = await response.json();
+    // Actualizar el ejercicio en el array local
+    const index = ejercicios.findIndex(e => e.nombre === nombre);
+    if (index !== -1) {
+      ejercicios[index] = ejercicioActualizado;
+    }
+    return ejercicioActualizado;
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
+
+// Datos temporales en caso de error de conexión
+
 
 // Inicialización
 document.addEventListener("DOMContentLoaded", () => {
+  // Cargar la sección de rutinas por defecto y activar el link
+  loadSection('rutinas');
+  const rutinasLink = document.querySelector('a[onclick="loadSection(\'rutinas\')"]');
+  if (rutinasLink) {
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    rutinasLink.classList.add('active');
+  }
+  
+  // Cargar ejercicios del backend
+  cargarEjercicios();
+  
   // Llenar el select de días de la semana en el modal
   const selectDiaSemana = document.getElementById("selectDiaSemana")
   if (selectDiaSemana) {
@@ -195,13 +185,12 @@ function loadRutinaDia(dia) {
 
   // Agregar event listeners para los checkboxes
   const checkboxes = document.querySelectorAll(".exercise-checkbox")
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", function (e) {
+  checkboxes.forEach((checkbox) => {    checkbox.addEventListener("change", async function (e) {
       e.stopPropagation() // Evitar que se abra el modal al hacer clic en el checkbox
       const ejercicioId = this.dataset.id
-      const ejercicio = ejercicios.find((e) => e.nombre === ejercicioId)
-      if (ejercicio) {
-        ejercicio.hecho = this.checked
+      const ejercicioActualizado = await toggleEjercicioStatus(ejercicioId)
+      if (ejercicioActualizado) {
+        loadRutinaDia(ejercicioActualizado.dia) // Recargar la vista para mostrar los cambios
       }
     })
   })
@@ -249,28 +238,33 @@ function renderEjerciciosCards(ejerciciosList) {
 }
 
 function abrirModal(titulo, descripcion, urlVideo, dificultad) {
-  document.getElementById("modalEjercicioLabel").innerText = titulo
-  document.getElementById("modalDescripcion").innerText = descripcion
-  document.getElementById("modalVideo").src = urlVideo
+  // Obtener el ejercicio completo
+  const ejercicio = ejercicios.find((e) => e.nombre === titulo);
+  if (!ejercicio) return;
 
-  // Actualizar la dificultad en el badge
-  const badgeDificultad = document.querySelector(".exercise-details .badge")
+  // Actualizar el título y descripción
+  document.getElementById("modalEjercicioLabel").innerText = titulo;
+  document.getElementById("modalDescripcion").innerText = descripcion;
+  
+  // Actualizar el video
+  const videoFrame = document.getElementById("modalVideo");
+  videoFrame.src = urlVideo;
+  
+  // Actualizar el badge de dificultad
+  const badgeDificultad = document.getElementById("modalDificultad");
   if (badgeDificultad) {
-    badgeDificultad.innerText = `Dificultad: ${dificultad || "Intermedia"}`
+    badgeDificultad.innerText = `Dificultad: ${dificultad || "Intermedia"}`;
   }
 
   // Cargar instrucciones
-  const instruccionesList = document.getElementById("modalInstrucciones")
-  if (instruccionesList) {
-    instruccionesList.innerHTML = ""
-    const ejercicio = ejercicios.find((e) => e.nombre === titulo)
-    if (ejercicio && ejercicio.instrucciones) {
-      ejercicio.instrucciones.forEach((instruccion) => {
-        const li = document.createElement("li")
-        li.textContent = instruccion
-        instruccionesList.appendChild(li)
-      })
-    }
+  const instruccionesList = document.getElementById("modalInstrucciones");
+  if (instruccionesList && ejercicio.instrucciones) {
+    instruccionesList.innerHTML = "";
+    ejercicio.instrucciones.forEach((instruccion) => {
+      const li = document.createElement("li");
+      li.textContent = instruccion;
+      instruccionesList.appendChild(li);
+    });
   }
 
   const modalElement = document.getElementById("modalEjercicio")
@@ -284,17 +278,15 @@ function abrirModal(titulo, descripcion, urlVideo, dificultad) {
     btnMarcarCompletado.innerHTML =
       ejercicio && ejercicio.hecho
         ? '<i class="bi bi-check-circle-fill"></i> Completado'
-        : '<i class="bi bi-check-circle"></i> Marcar como completado'
-
-    btnMarcarCompletado.onclick = () => {
-      if (ejercicio) {
-        ejercicio.hecho = !ejercicio.hecho
-        btnMarcarCompletado.innerHTML = ejercicio.hecho
+        : '<i class="bi bi-check-circle"></i> Marcar como completado';
+    btnMarcarCompletado.onclick = async () => {
+      const ejercicioActualizado = await toggleEjercicioStatus(titulo)
+      if (ejercicioActualizado) {
+        btnMarcarCompletado.innerHTML = ejercicioActualizado.hecho
           ? '<i class="bi bi-check-circle-fill"></i> Completado'
           : '<i class="bi bi-check-circle"></i> Marcar como completado'
-
         // Actualizar la UI
-        loadRutinaDia(ejercicio.dia)
+        loadRutinaDia(ejercicioActualizado.dia)
       }
     }
   }

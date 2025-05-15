@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Noox Fit - Administrador</title>
+  <title th:text="#{admin.title}">Noox Fit - Administrator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -14,7 +14,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold" href="#">
-        <i class="bi bi-fire text-warning"></i> Noox Fit <span class="badge bg-danger">Admin</span>
+        <i class="bi bi-fire text-warning"></i> <span th:text="#{admin.brand}">Noox Fit</span> <span class="badge bg-danger" th:text="#{admin.badge}">Admin</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
         <span class="navbar-toggler-icon"></span>
@@ -23,33 +23,32 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="loadSection('usuarios')">
-              <i class="bi bi-people"></i> Usuarios
+              <i class="bi bi-people"></i> <span th:text="#{admin.nav.users}">Users</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="loadSection('ejercicios')">
-              <i class="bi bi-activity"></i> Ejercicios
+              <i class="bi bi-activity"></i> <span th:text="#{admin.nav.exercises}">Exercises</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="loadSection('estadisticas')">
-              <i class="bi bi-bar-chart"></i> Estadísticas
+              <i class="bi bi-bar-chart"></i> <span th:text="#{admin.nav.stats}">Statistics</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" onclick="loadSection('configuracion')">
-              <i class="bi bi-gear"></i> Configuración
+              <i class="bi bi-gear"></i> <span th:text="#{admin.nav.settings}">Settings</span>
             </a>
           </li>
         </ul>
         <div class="dropdown">
           <button class="btn btn-outline-light dropdown-toggle user-profile" data-bs-toggle="dropdown">
-            <i class="bi bi-person-circle"></i> Admin
+            <i class="bi bi-person-circle"></i> <span th:text="#{admin.user.admin}">Admin</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-            <li><a class="dropdown-item" href="#"><i class="bi bi-shield-lock"></i> Seguridad</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/login.html"><i class="bi bi-box-arrow-right"></i> Cerrar Sesión</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-shield-lock"></i> <span th:text="#{admin.menu.security}">Security</span></a></li>            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" th:href="@{/login}"><i class="bi bi-box-arrow-right"></i> <span th:text="#{admin.menu.logout}">Logout</span></a></li>
           </ul>
         </div>
       </div>
@@ -60,7 +59,7 @@
   <div class="d-flex min-vh-100">
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar p-3">
-      <!-- Se carga dinámicamente según la sección -->
+      <!-- Loaded dynamically based on section -->
     </div>
 
     <!-- Content -->
@@ -69,8 +68,8 @@
         <div class="welcome-icon mb-4">
           <i class="bi bi-speedometer2"></i>
         </div>
-        <h2 class="fw-bold">Panel de Administración</h2>
-        <p class="lead">Gestiona usuarios, ejercicios y configuraciones del sistema.</p>
+        <h2 class="fw-bold" th:text="#{admin.dashboard.title}">Administration Panel</h2>
+        <p class="lead" th:text="#{admin.dashboard.subtitle}">Manage users, exercises, and system settings.</p>
         <div class="quick-stats row mt-5">
           <div class="col-md-3">
             <div class="stat-card">
@@ -78,7 +77,7 @@
                 <i class="bi bi-people-fill"></i>
               </div>
               <div class="stat-value">124</div>
-              <div class="stat-label">Usuarios Activos</div>
+              <div class="stat-label" th:text="#{admin.stats.active.users}">Active Users</div>
             </div>
           </div>
           <div class="col-md-3">
@@ -87,7 +86,7 @@
                 <i class="bi bi-activity"></i>
               </div>
               <div class="stat-value">87</div>
-              <div class="stat-label">Ejercicios</div>
+              <div class="stat-label" th:text="#{admin.stats.exercises}">Exercises</div>
             </div>
           </div>
           <div class="col-md-3">
@@ -96,7 +95,7 @@
                 <i class="bi bi-calendar-check"></i>
               </div>
               <div class="stat-value">56</div>
-              <div class="stat-label">Rutinas Creadas</div>
+              <div class="stat-label" th:text="#{admin.stats.routines}">Created Routines</div>
             </div>
           </div>
           <div class="col-md-3">
@@ -105,25 +104,22 @@
                 <i class="bi bi-graph-up"></i>
               </div>
               <div class="stat-value">92%</div>
-              <div class="stat-label">Tasa de Retención</div>
+              <div class="stat-label" th:text="#{admin.stats.retention}">Retention Rate</div>
             </div>
           </div>
         </div>
         <div class="quick-actions mt-5">
           <button class="btn btn-primary btn-lg me-2" onclick="loadSection('usuarios')">
-            <i class="bi bi-people"></i> Gestionar Usuarios
+            <i class="bi bi-people"></i> <span th:text="#{admin.action.manage.users}">Manage Users</span>
           </button>
           <button class="btn btn-outline-light btn-lg" onclick="loadSection('ejercicios')">
-            <i class="bi bi-activity"></i> Gestionar Ejercicios
+            <i class="bi bi-activity"></i> <span th:text="#{admin.action.manage.exercises}">Manage Exercises</span>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-
-
-  <!-- Bootstrap + Script -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="./js/admin.js"></script>
 </body>

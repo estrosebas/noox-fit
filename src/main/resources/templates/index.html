@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <!-- Viewport meta tag para hacer la página responsive -->
@@ -14,9 +14,8 @@
     <!-- Navbar: barra de navegación oscura expandible en pantallas grandes -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-black">
         <!-- Container: mantiene el contenido centrado y con márgenes -->
-        <div class="container">
-            <!-- Navbar-brand: logo o nombre de la marca -->
-            <a class="navbar-brand" href="index.html">NOOX FIT</a>
+        <div class="container">            <!-- Navbar-brand: logo o nombre de la marca -->
+            <a class="navbar-brand" th:href="@{/}">NOOX FIT</a>
             <!-- Botón hamburguesa para menú móvil -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -27,24 +26,23 @@
                 <ul class="navbar-nav me-auto">
                     <!-- Elementos de navegación con estados activo/inactivo -->
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home">Home</a>
+                        <a class="nav-link active" href="#home" th:text="#{navbar.home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
+                        <a class="nav-link" href="#features" th:text="#{navbar.features}">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About Us</a>
+                        <a class="nav-link" href="#about" th:text="#{navbar.about}">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="#contact" th:text="#{navbar.contact}">Contact</a>
                     </li>
                 </ul>
-                <!-- Contenedor flex para los botones de login/register -->
-                <div class="d-flex">
+                <!-- Contenedor flex para los botones de login/register -->                <div class="d-flex">
                     <!-- Botón outline con margen a la derecha -->
-                    <a href="login.html" class="btn btn-outline-light me-2">Login</a>
+                    <a th:href="@{/login}" class="btn btn-outline-light me-2" th:text="#{navbar.login}">Login</a>
                     <!-- Botón primario -->
-                    <a href="register.html" class="btn btn-primary">Register</a>
+                    <a th:href="@{/register}" class="btn btn-primary" th:text="#{navbar.register}">Register</a>
                 </div>
             </div>
         </div>
@@ -54,11 +52,14 @@
     <section id="home" class="hero-section text-center">
         <!-- Container para mantener el contenido centrado -->
         <div class="container">
-            <h1>Transform Your Fitness Journey</h1>
+            <h1 th:text="#{hero.title}">Transform Your Fitness Journey</h1>
             <!-- Clase lead para párrafo destacado -->
-            <p class="lead">Track your workouts, set goals, and achieve results with Noox Fit</p>
-            <!-- Botón grande primario -->
-            <a href="register.html" class="btn btn-primary btn-lg">Get Started</a>
+            <p class="lead" th:text="#{hero.subtitle}">Track your workouts, set goals, and achieve results with Noox Fit</p>
+            <!-- Botones de acción -->
+            <div class="d-flex justify-content-center gap-3">
+                <a th:href="@{/register}" class="btn btn-primary btn-lg" th:text="#{hero.button}">Get Started</a>
+                <button type="button" class="btn btn-outline-light btn-lg" onclick="loadPromotions()" th:text="#{promotions.button}">View Promotions</button>
+            </div>
         </div>
     </section>
 
@@ -66,31 +67,31 @@
     <section id="features" class="py-5 bg-dark">
         <!-- Container para mantener el contenido centrado -->
         <div class="container">
-            <h2 class="text-center mb-5 text-light">Features</h2>
+            <h2 class="text-center mb-5 text-light" th:text="#{features.title}">Features</h2>
             <div class="row">
                 <!-- Columna de características con margen inferior -->
                 <div class="col-md-4 mb-4">
                     <!-- Tarjeta con fondo oscuro sutil, texto claro y borde secundario -->
                     <div class="card h-100 bg-dark-subtle text-light border-secondary">
                         <div class="card-body text-center">
-                            <h3 class="card-title">Workout Tracking</h3>
-                            <p class="card-text">Log your exercises, sets, reps, and weights to monitor your progress.</p>
+                            <h3 class="card-title" th:text="#{features.workout.title}">Workout Tracking</h3>
+                            <p class="card-text" th:text="#{features.workout.description}">Log your exercises, sets, reps, and weights to monitor your progress.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 bg-dark-subtle text-light border-secondary">
                         <div class="card-body text-center">
-                            <h3 class="card-title">Custom Routines</h3>
-                            <p class="card-text">Create personalized workout routines tailored to your fitness goals.</p>
+                            <h3 class="card-title" th:text="#{features.routines.title}">Custom Routines</h3>
+                            <p class="card-text" th:text="#{features.routines.description}">Create personalized workout routines tailored to your fitness goals.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 bg-dark-subtle text-light border-secondary">
                         <div class="card-body text-center">
-                            <h3 class="card-title">Progress Analytics</h3>
-                            <p class="card-text">Visualize your fitness journey with detailed charts and statistics.</p>
+                            <h3 class="card-title" th:text="#{features.analytics.title}">Progress Analytics</h3>
+                            <p class="card-text" th:text="#{features.analytics.description}">Visualize your fitness journey with detailed charts and statistics.</p>
                         </div>
                     </div>
                 </div>
@@ -102,15 +103,15 @@
     <section id="about" class="py-5 bg-black">
         <!-- Container para mantener el contenido centrado -->
         <div class="container">
-            <h2 class="text-center mb-5 text-light">About Us</h2>
+            <h2 class="text-center mb-5 text-light" th:text="#{about.title}">About Us</h2>
             <div class="row align-items-center">
                 <!-- Columna con imagen redondeada -->
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <img src="./img/cbum.png" alt="About Noox Fit" class="img-fluid rounded">
                 </div>
                 <div class="col-lg-6">
-                    <h3 class="text-light">Our Mission</h3>
-                    <p class="text-light-emphasis">At Noox Fit, we believe that fitness should be accessible to everyone. Our mission is to provide a simple yet powerful tool to help you track your fitness journey and achieve your goals.</p>
+                    <h3 class="text-light" th:text="#{about.mission.title}">Our Mission</h3>
+                    <p class="text-light-emphasis" th:text="#{about.mission.description}">At Noox Fit, we believe that fitness should be accessible to everyone. Our mission is to provide a simple yet powerful tool to help you track your fitness journey and achieve your goals.</p>
                 </div>
             </div>
         </div>
@@ -120,24 +121,66 @@
     <section id="contact" class="py-5 bg-dark">
         <!-- Container para mantener el contenido centrado -->
         <div class="container">
-            <h2 class="text-center mb-5 text-light">Contact Us</h2>
+            <h2 class="text-center mb-5 text-light" th:text="#{contact.title}">Contact Us</h2>
             <div class="row">
-                <div class="col-lg-6 mx-auto">
-                    <form>
+                <div class="col-lg-6 mx-auto">                    <form id="contactForm" onsubmit="return handleContactSubmit(event)">
                         <div class="mb-3">
-                            <label for="name" class="form-label text-light">Name</label>
+                            <label for="name" class="form-label text-light" th:text="#{contact.name}">Name</label>
                             <input type="text" class="form-control bg-dark-subtle text-light border-secondary" id="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label text-light">Email</label>
+                            <label for="email" class="form-label text-light" th:text="#{contact.email}">Email</label>
                             <input type="email" class="form-control bg-dark-subtle text-light border-secondary" id="email" required>
                         </div>
                         <div class="mb-3">
-                            <label for="message" class="form-label text-light">Message</label>
+                            <label for="message" class="form-label text-light" th:text="#{contact.message}">Message</label>
                             <textarea class="form-control bg-dark-subtle text-light border-secondary" id="message" rows="4" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{contact.button}">Send Message</button>
                     </form>
+                    
+                    <!-- Confirmation Modal -->
+                    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content bg-dark text-light">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" th:text="#{contact.confirm.title}">Confirm Submission</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:text="#{contact.confirm.message}">Are you sure you want to send this message?</p>
+                                    <div class="message-preview">
+                                        <strong th:text="#{contact.name}">Name</strong>: <span id="previewName"></span><br>
+                                        <strong th:text="#{contact.email}">Email</strong>: <span id="previewEmail"></span><br>
+                                        <strong th:text="#{contact.message}">Message</strong>: <br>
+                                        <span id="previewMessage"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{contact.confirm.cancel}">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitContactForm()" th:text="#{contact.confirm.send}">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success Modal -->
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content bg-dark text-light">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" th:text="#{contact.success.title}">Success!</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p th:text="#{contact.success.message}">Your message has been sent successfully!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" th:text="#{contact.success.close}">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,34 +192,73 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>NOOX FIT</h5>
-                    <p>Your ultimate fitness tracking solution.</p>
+                    <h5 th:text="#{footer.brand}">NOOX FIT</h5>
+                    <p th:text="#{footer.description}">Your ultimate fitness tracking solution.</p>
                 </div>
                 <div class="col-md-3">
-                    <h5>Links</h5>
+                    <h5 th:text="#{footer.links.title}">Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#home" class="text-light">Home</a></li>
-                        <li><a href="#features" class="text-light">Features</a></li>
-                        <li><a href="#about" class="text-light">About Us</a></li>
-                        <li><a href="#contact" class="text-light">Contact</a></li>
+                        <li><a href="#home" class="text-light" th:text="#{footer.links.home}">Home</a></li>
+                        <li><a href="#features" class="text-light" th:text="#{footer.links.features}">Features</a></li>
+                        <li><a href="#about" class="text-light" th:text="#{footer.links.about}">About Us</a></li>
+                        <li><a href="#contact" class="text-light" th:text="#{footer.links.contact}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5>Follow Us</h5>
+                    <h5 th:text="#{footer.follow.title}">Follow Us</h5>
                     <div class="d-flex">
-                        <a href="#" class="text-light me-2">Facebook</a>
-                        <a href="#" class="text-light me-2">Twitter</a>
-                        <a href="#" class="text-light">Instagram</a>
+                        <a href="#" class="text-light me-2" th:text="#{footer.follow.facebook}">Facebook</a>
+                        <a href="#" class="text-light me-2" th:text="#{footer.follow.twitter}">Twitter</a>
+                        <a href="#" class="text-light" th:text="#{footer.follow.instagram}">Instagram</a>
                     </div>
                 </div>
             </div>
             <hr class="border-secondary">
             <div class="text-center">
-                <p>&copy; 2023 Noox Fit. All rights reserved.</p>
+                <p th:text="#{footer.copyright}">&copy; 2023 Noox Fit. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Hidden elements for translations -->
+    <div class="d-none">
+        <span id="discountText" th:text="#{promotions.discount}">Discount</span>
+        <span id="validUntilText" th:text="#{promotions.valid.until}">Valid Until</span>
+    </div>
+
+    <!-- Promotions Modal -->
+    <div class="modal fade" id="promotionsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="#{promotions.modal.title}">Current Promotions</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="promotionsLoading" class="text-center">
+                        <p th:text="#{promotions.loading}">Loading promotions...</p>
+                    </div>
+                    <div id="promotionsError" class="alert alert-danger d-none">
+                        <p th:text="#{promotions.error}">Error loading promotions. Please try again.</p>
+                    </div>
+                    <div id="promotionsContent" class="d-none">
+                        <!-- Promotions will be loaded here dynamically -->
+                    </div>
+                    <div id="promotionsEmpty" class="text-center d-none">
+                        <p th:text="#{promotions.none}">No promotions available at this time.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{promotions.modal.close}">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/contact.js"></script>
+    <script src="./js/promotions.js"></script>
+    
     <!-- Diccionario de clases Bootstrap utilizadas -->
     <!-- 
     Clases generales de Bootstrap utilizadas en esta página:
@@ -225,9 +307,6 @@
     Utilidades de Borde:
     - border-secondary: Borde de color secundario
     - rounded-3: Bordes redondeados
-    -->
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    --> 
 </body>
 </html>
