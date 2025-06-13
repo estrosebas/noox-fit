@@ -90,7 +90,6 @@ function loadSection(section) {
   sidebar.innerHTML = ""
   main.innerHTML = ""
 
-  // Mostrar/ocultar sidebar según la sección
   if (section === "rutinas") {
     sidebar.style.display = "block"
     if (window.innerWidth < 992) {
@@ -98,14 +97,13 @@ function loadSection(section) {
     }
 
     const titulo = document.createElement("h5")
-    titulo.innerHTML = '<i class="bi bi-calendar-week"></i> Días de la Semana'
+    titulo.innerHTML = '<i class="bi bi-calendar-week"></i> <span th:text="#{user.week.title}">Días de la Semana</span>'
     sidebar.appendChild(titulo)
 
     diasSemana.forEach((dia) => {
       const btn = document.createElement("button")
       btn.className = "btn btn-outline-light btn-day"
 
-      // Verificar si hay ejercicios para este día
       const tieneEjercicios = ejercicios.some((e) => e.dia === dia)
 
       btn.innerHTML = `
@@ -121,7 +119,6 @@ function loadSection(section) {
       sidebar.appendChild(btn)
     })
 
-    // Cargar el primer día por defecto
     loadRutinaDia("Lunes")
   } else {
     sidebar.style.display = "none"
@@ -152,13 +149,13 @@ function loadRutinaDia(dia) {
 
   main.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="mb-0"><i class="bi bi-calendar-check"></i> Rutina de ${dia}</h3>
+      <h3 class="mb-0"><i class="bi bi-calendar-check"></i> <span th:text="#{user.nav.routines}">Rutinas</span> ${dia}</h3>
       <div class="d-flex gap-2">
         <button class="btn btn-sm btn-outline-light">
-          <i class="bi bi-arrow-left-right"></i> Cambiar orden
+          <i class="bi bi-arrow-left-right"></i> <span th:text="#{user.exercise.sort}">Cambiar orden</span>
         </button>
         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio">
-          <i class="bi bi-plus-lg"></i> Agregar
+          <i class="bi bi-plus-lg"></i> <span th:text="#{user.exercise.add}">Agregar</span>
         </button>
       </div>
     </div>
@@ -169,9 +166,9 @@ function loadRutinaDia(dia) {
           ? renderEjerciciosCards(ejerciciosDia)
           : `<div class="col-12">
           <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> No hay ejercicios para este día.
+            <i class="bi bi-info-circle"></i> <span th:text="#{user.exercise.no.exercises}">No hay ejercicios para este día.</span>
             <button class="btn btn-sm btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio">
-              Agregar ejercicio
+              <span th:text="#{user.exercise.add}">Agregar ejercicio</span>
             </button>
           </div>
         </div>`
@@ -205,7 +202,9 @@ function renderEjerciciosCards(ejerciciosList) {
         <div class="card-img-container">
           <img src="${e.imagen}" class="card-img-top" alt="${e.nombre}">
           <div class="card-img-overlay">
-            <span class="badge bg-${e.hecho ? "success" : "primary"}">${e.hecho ? "Completado" : e.dificultad}</span>
+            <span class="badge bg-${e.hecho ? "success" : "primary"}">
+              ${e.hecho ? '<span th:text="#{user.exercise.completed}">Completado</span>' : e.dificultad}
+            </span>
           </div>
         </div>
         <div class="card-body">
@@ -216,23 +215,23 @@ function renderEjerciciosCards(ejerciciosList) {
             <input class="form-check-input exercise-checkbox" type="checkbox" id="${e.dia}-ej${i}" 
               ${e.hecho ? "checked" : ""} data-id="${e.nombre}">
             <label class="form-check-label" for="${e.dia}-ej${i}">
-              Marcar como completado
+              <span th:text="#{user.exercise.mark.complete}">Marcar como completado</span>
             </label>
           </div>
           
           <div class="card-actions">
             <button class="btn btn-sm btn-primary btn-view" 
               onclick="abrirModal('${e.nombre}', '${e.descripcion}', '${e.urlVideo}', '${e.dificultad}')">
-              <i class="bi bi-play-circle"></i> Ver ejercicio
+              <i class="bi bi-play-circle"></i> <span th:text="#{user.exercise.view}">Ver ejercicio</span>
             </button>
-            <button class="btn btn-sm btn-outline-light" data-bs-toggle="tooltip" title="Editar">
+            <button class="btn btn-sm btn-outline-light" data-bs-toggle="tooltip" th:title="#{user.exercise.edit}">
               <i class="bi bi-pencil"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-  `,
+  `
     )
     .join("")
 }
@@ -243,8 +242,8 @@ function abrirModal(titulo, descripcion, urlVideo, dificultad) {
   if (!ejercicio) return;
 
   // Actualizar el título y descripción
-  document.getElementById("modalEjercicioLabel").innerText = titulo;
-  document.getElementById("modalDescripcion").innerText = descripcion;
+  document.getElementById("modalEjercicioLabel").innerHTML = `<span th:text="#{user.modal.exercise.title}">${titulo}</span>`;
+  document.getElementById("modalDescripcion").innerHTML = `<span th:text="#{user.modal.exercise.description}">${descripcion}</span>`;
   
   // Actualizar el video
   const videoFrame = document.getElementById("modalVideo");
@@ -253,7 +252,7 @@ function abrirModal(titulo, descripcion, urlVideo, dificultad) {
   // Actualizar el badge de dificultad
   const badgeDificultad = document.getElementById("modalDificultad");
   if (badgeDificultad) {
-    badgeDificultad.innerText = `Dificultad: ${dificultad || "Intermedia"}`;
+    badgeDificultad.innerHTML = `<span th:text="#{user.modal.exercise.difficulty}">Dificultad:</span> ${dificultad || "Intermedia"}`;
   }
 
   // Cargar instrucciones
@@ -299,12 +298,12 @@ function renderProgresos(container) {
 
   container.innerHTML = `
     <div class="mb-4">
-      <h3 class="mb-3"><i class="bi bi-graph-up"></i> Tus Progresos</h3>
-      <p class="lead">Visualiza tu rendimiento y progreso en el entrenamiento.</p>
+      <h3 class="mb-3"><i class="bi bi-graph-up"></i> <span th:text="#{user.progress.title}"></span></h3>
+      <p class="lead"><span th:text="#{user.progress.subtitle}"></span></p>
     </div>
     
     <div class="progress-container mb-4">
-      <h5 class="mb-3">Resumen General</h5>
+      <h5 class="mb-3"><span th:text="#{user.report.week.summary}">Resumen General</span></h5>
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col">
           <div class="stat-card">
@@ -312,7 +311,7 @@ function renderProgresos(container) {
               <i class="bi bi-check-circle"></i>
             </div>
             <div class="stat-value">${completados}</div>
-            <div class="stat-label">Ejercicios Completados</div>
+            <div class="stat-label"><span th:text="#{user.progress.completed}">Ejercicios Completados</span></div>
           </div>
         </div>
         <div class="col">
@@ -321,7 +320,7 @@ function renderProgresos(container) {
               <i class="bi bi-lightning"></i>
             </div>
             <div class="stat-value">${total - completados}</div>
-            <div class="stat-label">Ejercicios Pendientes</div>
+            <div class="stat-label"><span th:text="#{user.progress.pending}">Ejercicios Pendientes</span></div>
           </div>
         </div>
         <div class="col">
@@ -330,14 +329,14 @@ function renderProgresos(container) {
               <i class="bi bi-percent"></i>
             </div>
             <div class="stat-value">${porcentaje}%</div>
-            <div class="stat-label">Progreso Total</div>
+            <div class="stat-label"><span th:text="#{user.progress.total}">Progreso Total</span></div>
           </div>
         </div>
       </div>
     </div>
     
     <div class="progress-container">
-      <h5 class="mb-3">Progreso por Día</h5>
+      <h5 class="mb-3"><span th:text="#{user.progress.day}">Progreso por Día</span></h5>
       <div class="row">
         <div class="col-12">
           ${renderProgresoPorDia()}
@@ -375,21 +374,21 @@ function renderInformeSemanal(container) {
 
   container.innerHTML = `
     <div class="mb-4">
-      <h3 class="mb-3"><i class="bi bi-clipboard-data"></i> Informe Semanal</h3>
-      <p class="lead">Resumen de tu actividad y rendimiento durante la semana.</p>
+      <h3 class="mb-3"><i class="bi bi-clipboard-data"></i> <span th:text="#{user.report.week.title}">Informe Semanal</span></h3>
+      <p class="lead"><span th:text="#{user.report.week.subtitle}">Resumen de tu actividad y rendimiento durante la semana.</span></p>
     </div>
     
     <div class="report-card">
       <div class="report-header">
-        <div class="report-title">Resumen de la Semana</div>
+        <div class="report-title"><span th:text="#{user.report.week.summary}">Resumen de la Semana</span></div>
         <div class="report-date">14 - 20 Abril, 2024</div>
       </div>
       
       <div class="row mb-4">
         <div class="col-md-6">
-          <p>Esta semana has completado <strong>${completados} de ${total}</strong> ejercicios programados.</p>
-          <p>Tu día más activo fue <strong>Lunes</strong> con 2 ejercicios completados.</p>
-          <p>Tienes <strong>${total - completados}</strong> ejercicios pendientes para completar esta semana.</p>
+          <p><span th:text="#{user.report.week.completed}">Esta semana has completado</span> <strong>${completados} de ${total}</strong> <span th:text="#{user.report.week.exercises}">ejercicios programados.</span></p>
+          <p><span th:text="#{user.report.week.active.day}">Tu día más activo fue</span> <strong>Lunes</strong> <span th:text="#{user.report.week.active.exercises}">con 2 ejercicios completados.</span></p>
+          <p><span th:text="#{user.report.week.pending}">Tienes</span> <strong>${total - completados}</strong> <span th:text="#{user.report.week.pending.exercises}">ejercicios pendientes para completar esta semana.</span></p>
         </div>
         <div class="col-md-6">
           <div class="progress mb-3" style="height: 25px;">
@@ -399,13 +398,13 @@ function renderInformeSemanal(container) {
               ${Math.round((completados / total) * 100)}%
             </div>
           </div>
-          <p class="text-center">Progreso semanal</p>
+          <p class="text-center"><span th:text="#{user.report.week.progress}">Progreso semanal</span></p>
         </div>
       </div>
       
       <div class="alert alert-info">
-        <i class="bi bi-lightbulb"></i> <strong>Consejo de la semana:</strong> 
-        Recuerda mantener una buena hidratación durante tus entrenamientos para mejorar tu rendimiento.
+        <i class="bi bi-lightbulb"></i> <strong><span th:text="#{user.report.week.tip.title}">Consejo de la semana:</span></strong> 
+        <span th:text="#{user.report.week.tip.content}">Recuerda mantener una buena hidratación durante tus entrenamientos para mejorar tu rendimiento.</span>
       </div>
     </div>
     
@@ -413,16 +412,16 @@ function renderInformeSemanal(container) {
       <div class="col">
         <div class="report-card">
           <div class="report-header">
-            <div class="report-title">Ejercicios Destacados</div>
+            <div class="report-title"><span th:text="#{user.report.week.featured.exercises}">Ejercicios Destacados</span></div>
           </div>
           <ul class="list-group list-group-flush bg-transparent">
             <li class="list-group-item bg-transparent border-bottom border-light">
               <i class="bi bi-star-fill text-warning me-2"></i> Sentadillas
-              <span class="badge bg-success float-end">Completado</span>
+              <span class="badge bg-success float-end"><span th:text="#{user.exercise.completed}">Completado</span></span>
             </li>
             <li class="list-group-item bg-transparent border-bottom border-light">
               <i class="bi bi-star-fill text-warning me-2"></i> Push Ups
-              <span class="badge bg-primary float-end">Pendiente</span>
+              <span class="badge bg-primary float-end"><span th:text="#{user.exercise.pending}">Pendiente</span></span>
             </li>
           </ul>
         </div>
@@ -430,14 +429,14 @@ function renderInformeSemanal(container) {
       <div class="col">
         <div class="report-card">
           <div class="report-header">
-            <div class="report-title">Próximos Objetivos</div>
+            <div class="report-title"><span th:text="#{user.report.week.next.goals}">Próximos Objetivos</span></div>
           </div>
           <ul class="list-group list-group-flush bg-transparent">
             <li class="list-group-item bg-transparent border-bottom border-light">
-              <i class="bi bi-trophy text-warning me-2"></i> Completar todos los ejercicios de la semana
+              <i class="bi bi-trophy text-warning me-2"></i> <span th:text="#{user.report.week.goal.complete.week}">Completar todos los ejercicios de la semana</span>
             </li>
             <li class="list-group-item bg-transparent border-bottom border-light">
-              <i class="bi bi-trophy text-warning me-2"></i> Aumentar la intensidad de los ejercicios
+              <i class="bi bi-trophy text-warning me-2"></i> <span th:text="#{user.report.week.goal.increase.intensity}">Aumentar la intensidad de los ejercicios</span>
             </li>
           </ul>
         </div>
