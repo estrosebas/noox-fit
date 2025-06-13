@@ -19,7 +19,7 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/login")
+    /*@GetMapping("/login")
     public String login() {
         return "login";
     }
@@ -27,7 +27,7 @@ public class MainController {
     @GetMapping("/register")
     public String register() {
         return "register";
-    }
+    }*/
 
     @GetMapping("/admin")
     public String admin() {

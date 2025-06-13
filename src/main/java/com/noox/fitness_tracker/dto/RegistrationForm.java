@@ -8,7 +8,7 @@ public class RegistrationForm {
     private String direccion;
     private String sexo;
     private String correo;
-    private String contraseña;
+    private String password;
 
     // Default constructor
     public RegistrationForm() {
@@ -63,11 +63,11 @@ public class RegistrationForm {
         this.correo = correo;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getPassword() {
+        return password;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title th:text="#{register.title}">Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/login-and-register.css}"> <!-- Corrected path -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" th:href="@{/css/login-and-register.css}" />
 </head>
 <body>
     <div class="container py-5">
@@ -18,68 +18,67 @@
                 Registration successful! Please login.
             </div>
 
-            <!-- General Errors (Not bound to a specific field) -->
-            <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-                <ul>
-                    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Global Error</li>
-                </ul>
-            </div>
-
             <form id="registerForm" th:action="@{/register}" method="post" th:object="${registrationForm}">
                 <!-- CSRF token will be automatically included by thymeleaf-extras-springsecurity6 -->
+                
+                <!-- General Errors (Not bound to a specific field) -->
+                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                    <ul>
+                        <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Global Error</li>
+                    </ul>
+                </div>
 
                 <!-- 1. Input de texto (Nombre) -->
                 <div class="mb-3">
                     <label for="fullname" class="form-label" th:text="#{register.fullname}">Full Name</label>
-                    <input type="text" class="form-control" id="fullname" th:field="*{nombre}" required>
+                    <input type="text" class="form-control" id="fullname" th:field="*{nombre}" required="required" />
                     <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Name Error</div>
                 </div>
 
                 <!-- Apellido -->
                 <div class="mb-3">
                     <label for="apellido" class="form-label" th:text="#{register.label.apellido}">Last Name</label>
-                    <input type="text" class="form-control" id="apellido" th:field="*{apellido}">
+                    <input type="text" class="form-control" id="apellido" th:field="*{apellido}" />
                     <div class="text-danger" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">Last Name Error</div>
                 </div>
 
                 <!-- Edad -->
                 <div class="mb-3">
                     <label for="edad" class="form-label" th:text="#{register.label.edad}">Age</label>
-                    <input type="number" class="form-control" id="edad" th:field="*{edad}">
+                    <input type="number" class="form-control" id="edad" th:field="*{edad}" />
                     <div class="text-danger" th:if="${#fields.hasErrors('edad')}" th:errors="*{edad}">Age Error</div>
                 </div>
 
                 <!-- Direccion -->
                 <div class="mb-3">
                     <label for="direccion" class="form-label" th:text="#{register.label.direccion}">Address</label>
-                    <input type="text" class="form-control" id="direccion" th:field="*{direccion}">
+                    <input type="text" class="form-control" id="direccion" th:field="*{direccion}" />
                     <div class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}">Address Error</div>
                 </div>
 
                 <!-- Email -->
                 <div class="mb-3">
                     <label for="email" class="form-label" th:text="#{register.email}">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{correo}" required>
+                    <input type="email" class="form-control" id="email" th:field="*{correo}" required="required" />
                     <div class="text-danger" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}">Email Error</div>
                 </div>
 
                 <!-- Password -->
                 <div class="mb-3">
                     <label for="password" class="form-label" th:text="#{register.password}">Password</label>
-                    <input type="password" class="form-control" id="password" th:field="*{contraseña}" aria-describedby="passwordHelp" required>
-                    <div id="passwordHelp" class="form-text" th:text="#{register.password.help}">Minimum 8 characters.</div>
-                    <div class="text-danger" th:if="${#fields.hasErrors('contraseña')}" th:errors="*{contraseña}">Password Error</div>
+                    <input type="password" class="form-control" id="password" th:field="*{password}" aria-describedby="passwordHelp" required="required" />
+                    <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
                 </div>
 
                 <!-- Sexo (Gender) -->
                 <div class="mb-3">
                     <label class="form-label" th:text="#{register.gender}">Gender</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderMale" value="male" required>
+                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderMale" value="male" required="required" />
                         <label class="form-check-label" for="genderMale" th:text="#{register.gender.male}">Male</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderFemale" value="female">
+                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderFemale" value="female" />
                         <label class="form-check-label" for="genderFemale" th:text="#{register.gender.female}">Female</label>
                     </div>
                     <div class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}">Gender Error</div>
@@ -88,16 +87,26 @@
                 <!-- Country - This field is not in RegistrationForm DTO. -->
                 <div class="mb-3">
                     <label for="country" class="form-label" th:text="#{register.country}">Country</label>
-                    <select class="form-select" id="country" > <!-- Removed 'required' as it's not part of DTO -->
-                        <option selected disabled value="" th:text="#{register.country.select}">Select...</option>
+                    <select class="form-select" id="country">
+                        <option selected="selected" disabled="disabled" value="" th:text="#{register.country.select}">Select...</option>
                         <option value="MX" th:text="#{register.country.mexico}">Mexico</option>
                         <option value="CO" th:text="#{register.country.colombia}">Colombia</option>
+                        <option value="PE" th:text="#{register.country.peru}">Perú</option>
+                        <option value="AR" th:text="#{register.country.argentina}">Argentina</option>
+                        <option value="CL" th:text="#{register.country.chile}">Chile</option>
+                        <option value="US" th:text="#{register.country.usa}">United States</option>
+                        <option value="ES" th:text="#{register.country.spain}">Spain</option>}
+                        <option value="BR" th:text="#{register.country.brazil}">Brazil</option>
+                        <option value="FR" th:text="#{register.country.france}">France</option>
+                        <option value="DE" th:text="#{register.country.germany}">Germany</option>
+                        <option value="IT" th:text="#{register.country.italy}">Italy</option>
+                        <option value="JP" th:text="#{register.country.japan}">Japan</option>
                     </select>
                 </div>
 
                 <!-- Terms and conditions checkbox - also not in RegistrationForm DTO -->
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="terms" > <!-- Removed 'required' -->
+                    <input type="checkbox" class="form-check-input" id="terms" />
                     <label class="form-check-label" for="terms" th:text="#{register.terms}">I accept the terms and conditions</label>
                 </div>
 
@@ -152,9 +161,9 @@
                 <div class="modal-body">
                     <p th:text="#{register.confirm.message}">Please confirm your registration details:</p>
                     <div class="preview-data">
-                        <strong th:text="#{register.fullname}">Name</strong>: <span id="previewRegisterName"></span><br>
-                        <strong th:text="#{register.email}">Email</strong>: <span id="previewRegisterEmail"></span><br>
-                        <strong th:text="#{register.country}">Country</strong>: <span id="previewRegisterCountry"></span><br>
+                        <strong th:text="#{register.fullname}">Name</strong>: <span id="previewRegisterName"></span><br />
+                        <strong th:text="#{register.email}">Email</strong>: <span id="previewRegisterEmail"></span><br />
+                        <strong th:text="#{register.country}">Country</strong>: <span id="previewRegisterCountry"></span><br />
                         <strong th:text="#{register.gender}">Gender</strong>: <span id="previewRegisterGender"></span>
                     </div>
                 </div>
@@ -181,60 +190,7 @@
         </div>
     </div>
 
-    <!-- Diccionario de clases Bootstrap utilizadas -->
-    <!-- 
-    Clases generales de Bootstrap utilizadas en esta página:
-
-    Contenedores y Layout:
-    - container: Contenedor responsivo con márgenes automáticos
-    - row: Sistema de grid para layout
-    - col-md-6: Columna de 6 unidades en dispositivos medianos
-
-    Utilidades Flex:
-    - d-flex: Display flex
-    - justify-content-center: Centrado horizontal
-    - align-items-center: Centrado vertical
-
-    Formularios:
-    - form-label: Etiqueta de formulario
-    - form-control: Campo de formulario
-    - form-select: Selector desplegable estilizado
-    - form-check: Contenedor para checkbox y radio
-    - form-check-input: Input de tipo checkbox o radio
-    - form-check-label: Etiqueta para checkbox o radio
-
-    Utilidades de Espaciado:
-    - mb-3: Margen inferior
-    - mb-4: Margen inferior mayor
-    - mb-md-0: Elimina margen inferior en dispositivos medianos
-
-    Utilidades de Texto:
-    - text-center: Alineación de texto al centro
-    - text-light: Texto claro
-    - text-decoration-none: Sin decoración de texto
-
-    Botones:
-    - btn: Clase base para botones
-    - btn-primary: Botón de color primario
-    - btn-outline-info: Botón con borde de color info
-    - w-100: Ancho completo
-
-    Componentes Modal:
-    - modal: Ventana modal
-    - modal-dialog: Contenedor del diálogo modal
-    - modal-content: Contenido del modal
-    - modal-header: Encabezado del modal
-    - modal-body: Cuerpo del modal
-    - modal-footer: Pie del modal
-
-    Alertas:
-    - alert: Componente de alerta
-    - alert-warning: Alerta de tipo warning
-    - d-none: Ocultar elemento
-    -->
-
     <!-- Script de Bootstrap (necesario para el modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Removed auth.js as Spring MVC handles submission now -->
 </body>
 </html>

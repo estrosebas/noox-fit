@@ -73,9 +73,10 @@ public class CuentaController {
                 bindingResult.rejectValue("correo", "register.error.emailExists", "Email already exists. Please choose another one.");
             }
         }
-        if (registrationForm.getContraseña() == null || registrationForm.getContraseña().isEmpty()) {
-            bindingResult.rejectValue("contraseña", "error.registrationForm", "Password is required.");
+        if (registrationForm.getPassword() == null || registrationForm.getPassword().isEmpty()) {
+            bindingResult.rejectValue("password", "error.registrationForm", "Password is required.");
         }
+
         // Add more validation for password strength, email format, etc.
 
         if (bindingResult.hasErrors()) {
@@ -96,7 +97,7 @@ public class CuentaController {
         Cuenta cuenta = new Cuenta();
         cuenta.setUsuario(usuario);
         cuenta.setCorreo(registrationForm.getCorreo());
-        cuenta.setContraseña(passwordEncoder.encode(registrationForm.getContraseña()));
+        cuenta.setContraseña(passwordEncoder.encode(registrationForm.getPassword()));
         cuentaRepository.save(cuenta);
 
         return "redirect:/login?registrationSuccess"; // Redirect to login with a success parameter
