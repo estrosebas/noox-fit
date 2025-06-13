@@ -18,8 +18,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**")  // Disable CSRF for API endpoints
+            )
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/register", "/login", "/css/**", "/js/**", "/img/**", "/error/**", "/home", "/").permitAll() // Permit static, auth, home, and root
+                .requestMatchers("/register", "/login", "/css/**", "/js/**", "/img/**", "/error/**", "/home", "/", "/contactos/**", "/api/promotions").permitAll() // Permit static, auth, home, root and contact form
                 .requestMatchers("/user", "/user/**").authenticated() // Example: secure user dashboard
                 .anyRequest().authenticated() // All other requests need authentication (can be adjusted)
             )
