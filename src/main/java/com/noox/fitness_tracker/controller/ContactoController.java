@@ -70,6 +70,6 @@ public class ContactoController {
             redirectAttributes.addFlashAttribute("errorMessage", messageSource.getMessage("contact.form.error", null, locale));
         }
         // Redirect to the index page, specifically to the contact section
-        return "redirect:/index#contact";
+        return "redirect:/#contact";
     }
 }
