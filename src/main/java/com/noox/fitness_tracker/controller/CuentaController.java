@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 // Removed RestController, using Controller for Thymeleaf views
 // import org.springframework.web.bind.annotation.RestController;
 
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -115,6 +114,7 @@ public class CuentaController {
 
     @GetMapping("/api/cuentas/{id}") // Explicitly defining API path
     @ResponseBody // Ensure response is JSON for API calls
+
     public ResponseEntity<CuentaDTO> getCuentaById(@PathVariable Long id) {
         Optional<Cuenta> cuenta = cuentaRepository.findById(id);
         return cuenta.map(value -> ResponseEntity.ok(convertToDTO(value)))
@@ -126,22 +126,27 @@ public class CuentaController {
     @PostMapping("/api/cuentas") // Explicitly defining API path
     @ResponseBody // Ensure response is JSON for API calls
     public ResponseEntity<?> createCuentaApi(@RequestBody CuentaDTO cuentaDTO) { // Renamed to avoid clash
+
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(cuentaDTO.getIdusuario());
         if (usuarioOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario with id " + cuentaDTO.getIdusuario() + " not found.");
         }
         Usuario usuario = usuarioOptional.get();
+
         Cuenta cuenta = convertToEntityForApi(cuentaDTO, usuario); // Need a separate converter or adjust existing
         try {
             Cuenta savedCuenta = cuentaRepository.save(cuenta);
             return new ResponseEntity<>(convertToDTO(savedCuenta), HttpStatus.CREATED);
         } catch (Exception e) {
+
              return ResponseEntity.status(HttpStatus.CONFLICT).body("Error creating cuenta: " + e.getMessage());
         }
     }
 
+
     @PutMapping("/api/cuentas/{id}") // Explicitly defining API path
     @ResponseBody // Ensure response is JSON for API calls
+
     public ResponseEntity<?> updateCuenta(@PathVariable Long id, @RequestBody CuentaDTO cuentaDTO) {
         Optional<Cuenta> existingCuentaOptional = cuentaRepository.findById(id);
         if (existingCuentaOptional.isEmpty()) {
@@ -158,6 +163,7 @@ public class CuentaController {
 
         existingCuenta.setUsuario(usuario);
         existingCuenta.setCorreo(cuentaDTO.getCorreo());
+
         if (cuentaDTO.getContraseña() != null && !cuentaDTO.getContraseña().isEmpty()) {
             // Password update for API should also be encoded if it's direct password, or handled differently
             existingCuenta.setContraseña(passwordEncoder.encode(cuentaDTO.getContraseña()));
@@ -166,6 +172,7 @@ public class CuentaController {
             Cuenta updatedCuenta = cuentaRepository.save(existingCuenta);
             return ResponseEntity.ok(convertToDTO(updatedCuenta));
         } catch (Exception e) {
+
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error updating cuenta: " + e.getMessage());
         }
     }
