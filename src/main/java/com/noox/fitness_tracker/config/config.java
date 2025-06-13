@@ -1,4 +1,4 @@
-package com.noox.fitness_tracker;
+package com.noox.fitness_tracker.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;

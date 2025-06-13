@@ -403,7 +403,7 @@ function renderInformeSemanal(container) {
       </div>
       
       <div class="alert alert-info">
-        <i class="bi bi-lightbulb"></i> <strong><span th:text="#{user.report.week.tip.title}">Consejo de la semana:</span></strong> 
+        <i class="bi bi-lightbulb"></i> <strong><span th:text="#{user.report.week.tip.title}">Consejo de la semana:</span></strong>
         <span th:text="#{user.report.week.tip.content}">Recuerda mantener una buena hidratación durante tus entrenamientos para mejorar tu rendimiento.</span>
       </div>
     </div>
