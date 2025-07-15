@@ -23,11 +23,11 @@ function loadPromotions() {
                 contentEl.innerHTML = promotions.map(promo => `
                     <div class="card bg-primary text-white border-primary mb-3 shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">${promo.title}</h5>
-                            <p class="card-text">${promo.description}</p>
+                            <h5 class="card-title fw-bold">${window.messages[promo.title]}</h5>
+                            <p class="card-text">${window.messages[promo.description]}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge bg-warning text-dark fw-bold">${document.getElementById('discountText').textContent}: ${promo.discountPercentage}</span>
-                                <small class="text-light">${document.getElementById('validUntilText').textContent}: ${promo.validUntil}</small>
+                                <span class="badge bg-warning text-dark fw-bold">${window.messages['promotions.discount']}: ${promo.discountPercentage}</span>
+                                <small class="text-light">${window.messages['promotions.valid.until']}: ${promo.validUntil}</small>
                             </div>
                         </div>
                     </div>

@@ -51,29 +51,23 @@ public class MainController {
     }    
     @GetMapping("/api/promotions")
     @ResponseBody
-    public List<Promotion> getPromotions(Locale locale) {
-        // Determine if we should use Spanish or English
-        boolean isSpanish = locale.getLanguage().equals("es");
-
+    public List<Promotion> getPromotions() {
         return Arrays.asList(
             new Promotion(
-                isSpanish ? "Especial de Verano" : "Summer Special",
-                isSpanish ? "¡Ponte en forma para el verano! Descuento especial en membresías anuales" 
-                         : "Get fit for summer! Special discount on annual memberships",
+                "promotion.summer.title",
+                "promotion.summer.description",
                 "25%",
                 "2025-08-31"
             ),
             new Promotion(
-                isSpanish ? "Oferta para Nuevos Miembros" : "New Member Offer",
-                isSpanish ? "¡Únete ahora y obtén tu primer mes gratis!" 
-                         : "Join now and get your first month free",
+                "promotion.new.member.title",
+                "promotion.new.member.description",
                 "100%",
                 "2025-12-31"
             ),
             new Promotion(
-                isSpanish ? "Trae un Amigo" : "Bring a Friend",
-                isSpanish ? "Refiere a un amigo y ambos obtienen un descuento en planes mensuales" 
-                         : "Refer a friend and both get a discount on monthly plans",
+                "promotion.bring.friend.title",
+                "promotion.bring.friend.description",
                 "15%",
                 "2025-06-30"
             )
