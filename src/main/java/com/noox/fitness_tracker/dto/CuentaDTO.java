@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class CuentaDTO {
     private Long idcuenta;
     private Long idusuario; // To represent the foreign key
+    private Long rolId; // To represent the role foreign key
     private String correo;
     private String contraseña; // Consider security implications
     private LocalDateTime created;
@@ -13,9 +14,10 @@ public class CuentaDTO {
     public CuentaDTO() {
     }
 
-    public CuentaDTO(Long idcuenta, Long idusuario, String correo, String contraseña, LocalDateTime created, LocalDateTime lastmodified) {
+    public CuentaDTO(Long idcuenta, Long idusuario, Long rolId, String correo, String contraseña, LocalDateTime created, LocalDateTime lastmodified) {
         this.idcuenta = idcuenta;
         this.idusuario = idusuario;
+        this.rolId = rolId;
         this.correo = correo;
         this.contraseña = contraseña;
         this.created = created;
@@ -38,6 +40,14 @@ public class CuentaDTO {
 
     public void setIdusuario(Long idusuario) {
         this.idusuario = idusuario;
+    }
+
+    public Long getRolId() {
+        return rolId;
+    }
+
+    public void setRolId(Long rolId) {
+        this.rolId = rolId;
     }
 
     public String getCorreo() {

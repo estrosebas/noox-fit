@@ -32,8 +32,8 @@
             <form id="loginForm" th:action="@{/login}" method="post">
                 <!-- CSRF token will be automatically included by thymeleaf-extras-springsecurity6 -->
                 <div class="mb-3">
-                    <label for="username" class="form-label" th:text="#{login.email}">Email (Username)</label>
-                    <input type="email" class="form-control" id="username" name="username" required autofocus>
+                    <label for="correo" class="form-label" th:text="#{login.email}">Email (Username)</label>
+                    <input type="email" class="form-control" id="correo" name="correo" required autofocus>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label" th:text="#{login.password}">Password</label>

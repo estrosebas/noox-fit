@@ -17,10 +17,14 @@ public class Cuenta {
     @JoinColumn(name = "idusuario", nullable = false)
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "rol_id", nullable = false)
+    private Rol rol;
+
     @Column(unique = true, nullable = false)
     private String correo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60) // BCrypt hash length is typically 60 characters
     private String contraseña;
 
     @CreationTimestamp
@@ -49,6 +53,14 @@ public class Cuenta {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     public String getCorreo() {
