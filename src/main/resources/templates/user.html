@@ -3,46 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <title th:text="#{user.title}">Noox Fit - User Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/user.css">
 </head>
-<body class="bg-dark text-light">
+<body class="bg-dark text-light")
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">
+      <a class="navbar-brand fw-bold" href="#" th:href="@{/}">
         <i class="bi bi-fire text-warning"></i> <span th:text="#{user.brand}">Noox Fit</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      
+      <!-- Mobile menu button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
         <span class="navbar-toggler-icon"></span>
-      </button>      <div class="collapse navbar-collapse" id="navbarContent">
+      </button>
+      
+      <!-- Desktop navigation -->
+      <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" href="#" onclick="loadSection('rutinas')">
+            <a class="nav-link active" href="#" onclick="loadSection('rutinas')" data-section="rutinas">
               <i class="bi bi-calendar-check"></i> <span th:text="#{user.nav.routines}">Routines</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="loadSection('progresos')">
+            <a class="nav-link" href="#" onclick="loadSection('progresos')" data-section="progresos">
               <i class="bi bi-graph-up"></i> <span th:text="#{user.nav.progress}">Progress</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="loadSection('informe')">
+            <a class="nav-link" href="#" onclick="loadSection('informe')" data-section="informe">
               <i class="bi bi-clipboard-data"></i> <span th:text="#{user.nav.weekly}">Weekly Report</span>
             </a>
           </li>
         </ul>
+        
+        <!-- User profile dropdown -->
         <div class="dropdown">
-          <button class="btn btn-outline-light dropdown-toggle user-profile" data-bs-toggle="dropdown">
+          <button class="btn btn-outline-light dropdown-toggle user-profile" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle"></i> <span th:text="#{user.profile}">Profile</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
-            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square"></i> <span th:text="#{user.menu.edit}">Edit Profile</span></a></li>            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square"></i> <span th:text="#{user.menu.edit}">Edit Profile</span></a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> <span th:text="#{user.menu.settings}">Settings</span></a></li>
+            <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i> <span th:text="#{user.menu.logout}">Logout</span></a></li>
           </ul>
         </div>
@@ -50,70 +59,199 @@
     </div>
   </nav>
 
-  <!-- Main layout -->
-  <div class="d-flex min-vh-100">
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar p-3">
-      <!-- Loaded dynamically based on section -->
+  <!-- Mobile Offcanvas Navigation -->
+  <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+        <i class="bi bi-fire text-warning"></i> <span th:text="#{user.brand}">Noox Fit</span>
+      </h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
+    <div class="offcanvas-body">
+      <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" onclick="loadSection('rutinas')" data-section="rutinas" data-bs-dismiss="offcanvas">
+            <i class="bi bi-calendar-check"></i> <span th:text="#{user.nav.routines}">Routines</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="loadSection('progresos')" data-section="progresos" data-bs-dismiss="offcanvas">
+            <i class="bi bi-graph-up"></i> <span th:text="#{user.nav.progress}">Progress</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="loadSection('informe')" data-section="informe" data-bs-dismiss="offcanvas">
+            <i class="bi bi-clipboard-data"></i> <span th:text="#{user.nav.weekly}">Weekly Report</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i> <span th:text="#{user.profile}">Profile</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square"></i> <span th:text="#{user.menu.edit}">Edit Profile</span></a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> <span th:text="#{user.menu.settings}">Settings</span></a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i> <span th:text="#{user.menu.logout}">Logout</span></a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-    <!-- Content -->
-    <div class="container-fluid p-4" id="main-content">
-      <div class="welcome-container text-center">
-        <div class="welcome-icon mb-4">
-          <i class="bi bi-person-circle"></i>
+  <!-- Main layout -->
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Desktop Sidebar -->
+      <div class="col-lg-3 col-xl-2 d-none d-lg-block p-0 col-transition sidebar-container" id="sidebar-container">
+        <div id="sidebar" class="sidebar p-3 vh-100 sticky-top">
+          <!-- Loaded dynamically based on section -->
         </div>
-        <h2 class="fw-bold" th:text="#{user.welcome.title}">Welcome to Your Dashboard</h2>
-        <p class="lead" th:text="#{user.welcome.subtitle}">Track your fitness journey and achieve your goals</p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9 col-xl-10 p-3 p-md-4 col-transition main-content-container" id="main-content-container">
+        <div id="main-content">
+          <!-- Welcome Screen -->
+          <div class="welcome-container text-center">
+            <div class="welcome-icon mb-4">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <h2 class="fw-bold mb-3" th:text="#{user.welcome.title}">Welcome to Your Dashboard</h2>
+            <p class="lead mb-4" th:text="#{user.welcome.subtitle}">Track your fitness journey and achieve your goals</p>
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <div class="card bg-dark border-secondary">
+                  <div class="card-body">
+                    <h5 class="card-title" th:text="#{user.welcome.start}">Ready to start your workout?</h5>
+                    <p class="card-text" th:text="#{user.welcome.message}">Choose a section from the navigation menu to begin tracking your fitness progress.</p>
+                    <button class="btn btn-primary" onclick="loadSection('rutinas')">
+                      <i class="bi bi-play-circle"></i> <span th:text="#{user.welcome.button}">Get Started</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Exercise Modal -->
-  <div class="modal fade" id="modalEjercicio" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal fade" id="modalEjercicio" tabindex="-1" aria-labelledby="modalEjercicioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalEjercicioLabel" th:text="#{user.modal.exercise.title}">Exercise Title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title" id="modalEjercicioLabel" th:text="#{user.modal.exercise.title}">Exercise Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">          <div class="exercise-details mb-4">
-            <div class="row mb-3">
+        <div class="modal-body">
+          <div class="exercise-details">
+            <div class="row mb-4">
               <div class="col-md-8">
-                <h6><i class="bi bi-info-circle me-2"></i>[[#{user.modal.exercise.description}]]</h6>
-                <p id="modalDescripcion" class="lead"></p>
-                <div class="badge bg-primary mb-3" id="modalDificultad"></div>
+                <h6 class="mb-2">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <span th:text="#{user.modal.exercise.description}">Description</span>
+                </h6>
+                <p id="modalDescripcion" class="lead mb-3"></p>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <span class="badge bg-primary" id="modalDificultad"></span>
+                  <span class="badge bg-secondary" id="modalCategoria"></span>
+                </div>
               </div>
               <div class="col-md-4">
                 <div class="text-end">
-                  <button id="btnMarcarCompletado" class="btn btn-outline-success">
-                    <i class="bi bi-check-circle"></i> [[#{user.exercise.mark.complete}]]
+                  <button id="btnMarcarCompletado" class="btn btn-outline-success mb-2">
+                    <i class="bi bi-check-circle"></i> 
+                    <span th:text="#{user.exercise.mark.complete}">Mark as Complete</span>
                   </button>
+                  <div class="d-flex gap-2 justify-content-end">
+                    <button class="btn btn-sm btn-outline-secondary" title="Edit Exercise">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" title="Share Exercise">
+                      <i class="bi bi-share"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            <h6><i class="bi bi-play-circle me-2"></i>[[#{user.modal.exercise.video}]]</h6>
-            <div class="ratio ratio-16x9 mb-3">
-              <iframe id="modalVideo" src="" allowfullscreen></iframe>
+            
+            <!-- Video Section -->
+            <div class="mb-4">
+              <h6 class="mb-3">
+                <i class="bi bi-play-circle me-2"></i>
+                <span th:text="#{user.modal.exercise.video}">Exercise Video</span>
+              </h6>
+              <div class="ratio ratio-16x9 mb-3">
+                <iframe id="modalVideo" src="" allowfullscreen class="rounded"></iframe>
+              </div>
             </div>
-            <h6><i class="bi bi-list-check me-2"></i>[[#{user.modal.exercise.instructions}]]</h6>
-            <ol id="modalInstrucciones" class="mb-4"></ol>
             
+            <!-- Instructions Section -->
+            <div class="mb-4">
+              <h6 class="mb-3">
+                <i class="bi bi-list-check me-2"></i>
+                <span th:text="#{user.modal.exercise.instructions}">Instructions</span>
+              </h6>
+              <ol id="modalInstrucciones" class="instruction-list"></ol>
+            </div>
             
+            <!-- Tips Section -->
+            <div class="alert alert-info">
+              <i class="bi bi-lightbulb-fill me-2"></i>
+              <strong th:text="#{user.modal.exercise.tips}">Tips:</strong>
+              <span th:text="#{user.modal.exercise.tips.content}">Remember to maintain proper form and breathe consistently throughout the exercise.</span>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{user.modal.close}">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <span th:text="#{user.modal.close}">Close</span>
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextExercise()">
+            <span th:text="#{user.modal.next}">Next Exercise</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Floating Action Button -->
+  <div class="fab-container d-lg-none">
+    <button class="btn btn-primary floating-btn" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="exerciseToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <i class="bi bi-check-circle-fill text-success me-2"></i>
+        <strong class="me-auto" th:text="#{user.toast.success}">Success!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" id="toastBody">
+        <!-- Toast message will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="./js/user.js"></script>
+  
+  <!-- Additional Scripts -->
   <script>
-    document.querySelector('.navbar-toggler').addEventListener('click', function () {
-      document.querySelector('.sidebar').classList.toggle('show');
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
     });
   </script>
 </body>
