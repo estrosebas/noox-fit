@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.Authentication;
 import com.noox.fitness_tracker.model.Contact;
 import com.noox.fitness_tracker.model.Promotion;
 import com.noox.fitness_tracker.dto.ContactoDTO;
@@ -38,7 +39,12 @@ public class MainController {
     }
 
     @GetMapping("/user")
-    public String user() {
+    public String user(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            model.addAttribute("userEmail", email);
+            // Aquí podrías agregar más información del usuario si es necesario
+        }
         return "user";
     }
 

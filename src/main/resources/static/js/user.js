@@ -3,41 +3,89 @@ const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sába
 // Datos de ejercicios desde el backend
 let ejercicios = [];
 
+// Función para obtener el token JWT del localStorage
+function getJwtToken() {
+    return localStorage.getItem('jwt_token');
+}
+
+// Función para crear headers con autorización
+function getAuthHeaders() {
+    const token = getJwtToken();
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+    };
+}
+
+// Función para verificar si el usuario está autenticado
+function checkAuthentication() {
+    const token = getJwtToken();
+    if (!token) {
+        // Si no hay token, redirigir al login
+        window.location.href = '/login';
+        return false;
+    }
+    return true;
+}
+
+// Función para mostrar información del usuario
+function displayUserInfo() {
+    const userEmail = localStorage.getItem('user_email');
+    const username = localStorage.getItem('user_username');
+    
+    if (userEmail) {
+        // Actualizar elementos que muestren el usuario
+        const userProfileElements = document.querySelectorAll('.user-profile span');
+        userProfileElements.forEach(element => {
+            if (element.textContent.includes('Profile')) {
+                element.textContent = username || userEmail;
+            }
+        });
+    }
+}
+
 // Función para cargar los ejercicios desde el backend
 async function cargarEjercicios() {
-  try {
-    const response = await fetch('/api/exercises');
-    if (!response.ok) {
-      throw new Error('Error en la respuesta del servidor');
+    if (!checkAuthentication()) return;
+    
+    try {
+        const response = await fetch('/api/exercises', {
+            headers: getAuthHeaders()
+        });
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        ejercicios = await response.json();
+        // Carga la vista inicial con los ejercicios
+        loadRutinaDia("Lunes");
+    } catch (error) {
+        console.error('Error al cargar los ejercicios:', error);
     }
-    ejercicios = await response.json();
-    // Carga la vista inicial con los ejercicios
-    loadRutinaDia("Lunes");
-  } catch (error) {
-    console.error('Error al cargar los ejercicios:', error);
-  }
 }
 
 // Función para marcar un ejercicio como completado/incompleto
 async function toggleEjercicioStatus(nombre) {
-  try {
-    const response = await fetch(`/api/exercises/${nombre}/toggle`, {
-      method: 'POST',
-    });
-    if (!response.ok) {
-      throw new Error('Error al actualizar el estado del ejercicio');
+    if (!checkAuthentication()) return null;
+    
+    try {
+        const response = await fetch(`/api/exercises/${nombre}/toggle`, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        });
+        if (!response.ok) {
+            throw new Error('Error al actualizar el estado del ejercicio');
+        }
+        const ejercicioActualizado = await response.json();
+        // Actualizar el ejercicio en el array local
+        const index = ejercicios.findIndex(e => e.nombre === nombre);
+        if (index !== -1) {
+            ejercicios[index] = ejercicioActualizado;
+        }
+        return ejercicioActualizado;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
     }
-    const ejercicioActualizado = await response.json();
-    // Actualizar el ejercicio en el array local
-    const index = ejercicios.findIndex(e => e.nombre === nombre);
-    if (index !== -1) {
-      ejercicios[index] = ejercicioActualizado;
-    }
-    return ejercicioActualizado;
-  } catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
 }
 
 // Datos temporales en caso de error de conexión
@@ -45,6 +93,12 @@ async function toggleEjercicioStatus(nombre) {
 
 // Inicialización
 document.addEventListener("DOMContentLoaded", () => {
+  // Verificar autenticación al cargar la página
+  if (!checkAuthentication()) return;
+  
+  // Mostrar información del usuario
+  displayUserInfo();
+  
   // Cargar la sección de rutinas por defecto y activar el link
   loadSection('rutinas');
   const rutinasLink = document.querySelector('a[onclick="loadSection(\'rutinas\')"]');
@@ -443,4 +497,15 @@ function renderInformeSemanal(container) {
       </div>
     </div>
   `
+}
+
+// Función para cerrar sesión
+function logout() {
+  // Limpiar localStorage
+  localStorage.removeItem('jwt_token');
+  localStorage.removeItem('user_email');
+  localStorage.removeItem('user_username');
+  
+  // Redirigir al login
+  window.location.href = '/login';
 }

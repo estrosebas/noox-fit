@@ -11,10 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -53,7 +58,9 @@ public class AuthController {
             final String jwt = jwtUtil.generateToken(userDetails);
             
             System.out.println("Login successful for email: " + loginRequest.getCorreo());
-            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+            
+            // Return the JWT token with user information
+            return ResponseEntity.ok(new AuthenticationResponse(jwt, userDetails.getUsername(), loginRequest.getCorreo(), "USER"));
             
         } catch (BadCredentialsException e) {
             System.err.println("Bad credentials for email: " + loginRequest.getCorreo());
@@ -106,6 +113,62 @@ public class AuthController {
         } catch (Exception e) {
             System.err.println("Error en registro: " + e.getMessage());
             return ResponseEntity.badRequest().body("error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/auth/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(401).body("Usuario no autenticado");
+            }
+            
+            String email = authentication.getName();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            
+            // Crear respuesta con información del usuario
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("email", email);
+            userInfo.put("username", userDetails.getUsername());
+            userInfo.put("authorities", userDetails.getAuthorities());
+            
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            System.err.println("Error obteniendo usuario actual: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error interno del servidor");
+        }
+    }
+
+    @PostMapping("/api/auth/set-session")
+    public ResponseEntity<?> setSession(@RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
+        try {
+            String token = request.get("token");
+            if (token == null || token.isEmpty()) {
+                return ResponseEntity.badRequest().body("Token requerido");
+            }
+            
+            // Extraer username del token
+            String username = jwtUtil.extractUsername(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            
+            // Validar el token
+            if (jwtUtil.validateToken(token, userDetails)) {
+                // Crear autenticación en Spring Security
+                UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                
+                // Crear sesión HTTP
+                HttpSession session = httpRequest.getSession(true);
+                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                
+                return ResponseEntity.ok(Map.of("success", true, "redirect", "/user"));
+            } else {
+                return ResponseEntity.status(401).body("Token inválido");
+            }
+        } catch (Exception e) {
+            System.err.println("Error estableciendo sesión: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error interno del servidor");
         }
     }
 }

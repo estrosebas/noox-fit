@@ -55,8 +55,28 @@
                 return response.json();
             })
             .then(data => {
-                localStorage.setItem('token', data.jwt);
-                window.location.href = '/home';
+                // Guardar el token JWT en localStorage
+                localStorage.setItem('jwt_token', data.jwt);
+                localStorage.setItem('user_email', data.email);
+                localStorage.setItem('user_username', data.username);
+                
+                // Establecer sesión en Spring Security
+                return fetch('/api/auth/set-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: data.jwt })
+                });
+            })
+            .then(response => response.json())
+            .then(sessionData => {
+                if (sessionData.success) {
+                    // Redirigir a la página de usuario
+                    window.location.href = sessionData.redirect;
+                } else {
+                    throw new Error('Error estableciendo sesión');
+                }
             })
             .catch(error => {
                 errorMessage.textContent = 'Error: ' + error.message;
