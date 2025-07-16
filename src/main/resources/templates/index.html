@@ -145,7 +145,6 @@
                         <span th:text="${errorMessage}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>                    <form id="contactForm" th:action="@{/contactos/enviar}" method="post" th:object="${contactoDTO}">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <div class="mb-3">
                             <label for="name" class="form-label text-light" th:text="#{contact.name}">Name</label>
                             <input type="text" class="form-control bg-dark-subtle text-light border-secondary" id="name" th:field="*{nombre}" required>

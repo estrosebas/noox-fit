@@ -32,19 +32,37 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) {
         try {
+            System.out.println("Login attempt for email: " + loginRequest.getCorreo());
+            
+            // Validate input
+            if (loginRequest.getCorreo() == null || loginRequest.getCorreo().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+            
+            if (loginRequest.getContraseña() == null || loginRequest.getContraseña().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Password is required");
+            }
+            
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getCorreo(), loginRequest.getContraseña())
             );
+            
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getCorreo());
+            final String jwt = jwtUtil.generateToken(userDetails);
+            
+            System.out.println("Login successful for email: " + loginRequest.getCorreo());
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+            
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            System.err.println("Bad credentials for email: " + loginRequest.getCorreo());
+            return ResponseEntity.status(401).body("Invalid email or password");
+        } catch (Exception e) {
+            System.err.println("Login error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
         }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getCorreo());
-        final String jwt = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
     @PostMapping("/api/auth/register")
