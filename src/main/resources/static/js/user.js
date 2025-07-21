@@ -90,6 +90,9 @@ async function cargarEjercicios() {
         console.log('Ejercicios cargados por día:', ejerciciosPorDia);
         console.log('Total ejercicios:', todosLosEjercicios.length);
         
+        // Actualizar la UI después de cargar los datos
+        refreshRutinasUI();
+        
         // Cargar la vista inicial
         if (todosLosEjercicios.length > 0) {
             loadRutinaDia("Lunes");
@@ -98,6 +101,31 @@ async function cargarEjercicios() {
         console.error('Error al cargar los ejercicios:', error);
         // Usar datos de fallback si hay error
         loadFallbackExercises();
+    }
+}
+
+// Función para actualizar la UI de rutinas después de cargar los datos
+function refreshRutinasUI() {
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+    const sidebarContainer = document.getElementById("sidebar-container");
+    
+    // Solo actualizar si estamos en la sección de rutinas y el sidebar está visible
+    if (sidebar && main && !sidebarContainer.classList.contains('d-none')) {
+        // Actualizar solo los badges de conteo en el sidebar
+        const dayButtons = sidebar.querySelectorAll('.btn-day');
+        dayButtons.forEach((btn, index) => {
+            const dia = diasSemana[index];
+            if (dia) {
+                const ejerciciosDia = ejerciciosPorDia[dia] || [];
+                const cantidadEjercicios = ejerciciosDia.length;
+                const badge = btn.querySelector('.badge');
+                if (badge) {
+                    badge.textContent = cantidadEjercicios;
+                    badge.className = cantidadEjercicios > 0 ? 'badge bg-primary' : 'badge bg-secondary';
+                }
+            }
+        });
     }
 }
 
