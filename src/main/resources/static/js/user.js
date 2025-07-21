@@ -1,7 +1,8 @@
 const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
-// Datos de ejercicios desde el backend
-let ejercicios = [];
+// Datos de ejercicios desde el backend (organizados por día)
+let ejerciciosPorDia = {};
+let todosLosEjercicios = [];
 
 // Función para obtener el token JWT del localStorage
 function getJwtToken() {
@@ -21,9 +22,11 @@ function getAuthHeaders() {
 function checkAuthentication() {
     const token = getJwtToken();
     if (!token) {
-        // Si no hay token, redirigir al login
-        window.location.href = '/login';
-        return false;
+        console.log('No hay token JWT, pero permitiendo acceso para desarrollo');
+        // Para desarrollo, permitir acceso sin token
+        // En producción, descomentar la siguiente línea:
+        // window.location.href = '/login';
+        return true; // Cambiar a false en producción
     }
     return true;
 }
@@ -33,15 +36,36 @@ function displayUserInfo() {
     const userEmail = localStorage.getItem('user_email');
     const username = localStorage.getItem('user_username');
     
-    if (userEmail) {
+    if (userEmail || username) {
+        const displayName = username || userEmail.split('@')[0];
+        
         // Actualizar elementos que muestren el usuario
-        const userProfileElements = document.querySelectorAll('.user-profile span');
-        userProfileElements.forEach(element => {
-            if (element.textContent.includes('Profile')) {
-                element.textContent = username || userEmail;
-            }
-        });
+        const userProfileElement = document.getElementById('user-profile-name');
+        const userProfileElementMobile = document.getElementById('user-profile-name-mobile');
+        
+        if (userProfileElement) {
+            userProfileElement.textContent = displayName;
+        }
+        if (userProfileElementMobile) {
+            userProfileElementMobile.textContent = displayName;
+        }
     }
+}
+
+// Función para logout
+function logout() {
+    // Limpiar localStorage
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_username');
+    
+    // Mostrar mensaje de despedida
+    showToast('Sesión cerrada exitosamente', 'success');
+    
+    // Redirigir al login después de un breve delay
+    setTimeout(() => {
+        window.location.href = '/login';
+    }, 1000);
 }
 
 // Función para cargar los ejercicios desde el backend
@@ -49,26 +73,40 @@ async function cargarEjercicios() {
     if (!checkAuthentication()) return;
     
     try {
-        const response = await fetch('/api/exercises', {
+        const response = await fetch('/api/ejercicios/rutinas/todos-los-dias', {
             headers: getAuthHeaders()
         });
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
-        ejercicios = await response.json();
-        // Carga la vista inicial con los ejercicios
-        loadRutinaDia("Lunes");
+        ejerciciosPorDia = await response.json();
+        
+        // Crear array plano de todos los ejercicios para compatibilidad
+        todosLosEjercicios = [];
+        Object.values(ejerciciosPorDia).forEach(ejerciciosDia => {
+            todosLosEjercicios.push(...ejerciciosDia);
+        });
+        
+        console.log('Ejercicios cargados por día:', ejerciciosPorDia);
+        console.log('Total ejercicios:', todosLosEjercicios.length);
+        
+        // Cargar la vista inicial
+        if (todosLosEjercicios.length > 0) {
+            loadRutinaDia("Lunes");
+        }
     } catch (error) {
         console.error('Error al cargar los ejercicios:', error);
+        // Usar datos de fallback si hay error
+        loadFallbackExercises();
     }
 }
 
 // Función para marcar un ejercicio como completado/incompleto
-async function toggleEjercicioStatus(nombre) {
+async function toggleEjercicioStatus(idEjercicio) {
     if (!checkAuthentication()) return null;
     
     try {
-        const response = await fetch(`/api/exercises/${nombre}/toggle`, {
+        const response = await fetch(`/api/ejercicios/${idEjercicio}/toggle`, {
             method: 'POST',
             headers: getAuthHeaders()
         });
@@ -77,15 +115,61 @@ async function toggleEjercicioStatus(nombre) {
         }
         const ejercicioActualizado = await response.json();
         // Actualizar el ejercicio en el array local
-        const index = ejercicios.findIndex(e => e.nombre === nombre);
+        const index = todosLosEjercicios.findIndex(e => e.idejercicio === idEjercicio || e.nombre === idEjercicio);
         if (index !== -1) {
-            ejercicios[index] = ejercicioActualizado;
+            todosLosEjercicios[index] = ejercicioActualizado;
         }
         return ejercicioActualizado;
     } catch (error) {
         console.error('Error:', error);
         return null;
     }
+}
+
+// Función para cargar datos de fallback
+function loadFallbackExercises() {
+    const fallbackEjercicios = [
+        {
+            idejercicio: 1,
+            nombre: "Flexiones de Pecho",
+            descripcion: "Ejercicio básico de pecho que se puede hacer sin equipo",
+            imagenurl: "/img/flexiones.svg",
+            urlvideo: "https://www.youtube.com/embed/IODxDxX7oi4",
+            dificultad: "Principiante",
+            dia: "Lunes",
+            hecho: false
+        },
+        {
+            idejercicio: 2,
+            nombre: "Sentadillas",
+            descripcion: "Ejercicio fundamental para piernas",
+            imagenurl: "/img/sentadillas.svg",
+            urlvideo: "https://www.youtube.com/embed/ultWZbUMPL8",
+            dificultad: "Principiante",
+            dia: "Miércoles",
+            hecho: false
+        },
+        {
+            idejercicio: 3,
+            nombre: "Plancha",
+            descripcion: "Ejercicio isométrico para fortalecer el core",
+            imagenurl: "/img/plancha.svg",
+            urlvideo: "https://www.youtube.com/embed/ASdvN_XEl_c",
+            dificultad: "Principiante",
+            dia: "Viernes",
+            hecho: false
+        }
+    ];
+
+    // Organizar por días
+    ejerciciosPorDia = {};
+    diasSemana.forEach(dia => {
+        ejerciciosPorDia[dia] = fallbackEjercicios.filter(e => e.dia === dia);
+    });
+    
+    todosLosEjercicios = fallbackEjercicios;
+    console.log('Datos de fallback cargados:', todosLosEjercicios.length);
+    loadRutinaDia("Lunes");
 }
 
 // Datos temporales en caso de error de conexión
@@ -115,23 +199,33 @@ function cleanupEventListeners() {
 
 // Inicialización
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('DOM Content Loaded - Iniciando aplicación');
+  
   // Verificar autenticación al cargar la página
-  if (!checkAuthentication()) return;
+  if (!checkAuthentication()) {
+    console.log('No autenticado, redirigiendo...');
+    return;
+  }
+  
+  console.log('Usuario autenticado, continuando...');
   
   // Mostrar información del usuario
   displayUserInfo();
   
   // Inicializar navegación solo una vez
   if (!navigationInitialized) {
+    console.log('Inicializando navegación...');
     initializeNavigation();
     navigationInitialized = true;
   }
   
   // Cargar la sección de rutinas por defecto
+  console.log('Cargando sección de rutinas...');
   loadSection('rutinas');
   updateActiveNav('rutinas');
   
   // Cargar ejercicios del backend
+  console.log('Cargando ejercicios...');
   cargarEjercicios();
   
   // Llenar el select de días de la semana en el modal
@@ -153,6 +247,8 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Agregar listener para cambios de tamaño de ventana
   window.addEventListener('resize', handleWindowResize);
+  
+  console.log('Aplicación inicializada correctamente');
 });
 
 // Función para manejar cambios de tamaño de ventana
@@ -374,8 +470,9 @@ function updateMobileNavigation(section) {
     weekDaysList.className = 'list-unstyled';
     
     diasSemana.forEach(dia => {
-      const tieneEjercicios = ejercicios.some((e) => e.dia === dia);
-      const cantidadEjercicios = ejercicios.filter((e) => e.dia === dia).length;
+      const ejerciciosDia = ejerciciosPorDia[dia] || [];
+      const tieneEjercicios = ejerciciosDia.length > 0;
+      const cantidadEjercicios = ejerciciosDia.length;
       
       const listItem = document.createElement('li');
       listItem.className = 'mb-2';
@@ -428,8 +525,9 @@ function renderRutinasSection(sidebar, main) {
     const btn = document.createElement("button");
     btn.className = "btn btn-outline-light btn-day";
 
-    const tieneEjercicios = ejercicios.some((e) => e.dia === dia);
-    const cantidadEjercicios = ejercicios.filter((e) => e.dia === dia).length;
+    const ejerciciosDia = ejerciciosPorDia[dia] || [];
+    const tieneEjercicios = ejerciciosDia.length > 0;
+    const cantidadEjercicios = ejerciciosDia.length;
 
     btn.innerHTML = `
       <div class="d-flex justify-content-between align-items-center">
@@ -494,7 +592,7 @@ function nextExercise() {
 
 function loadRutinaDia(dia) {
   const main = document.getElementById("main-content");
-  const ejerciciosDia = ejercicios.filter((e) => e.dia.toLowerCase() === dia.toLowerCase());
+  const ejerciciosDia = ejerciciosPorDia[dia] || [];
 
   // Evitar cargar el mismo día múltiples veces
   if (currentDay === dia) return;
@@ -649,7 +747,7 @@ function renderEjerciciosCards(ejerciciosList) {
       <div class="col">
         <div class="exercise-card h-100">
           <div class="card-img-container">
-            <img src="${e.imagen}" class="card-img-top" alt="${e.nombre}" loading="lazy">
+            <img src="${e.imagenurl && e.imagenurl !== '' ? e.imagenurl : '/img/exercise-default.svg'}" class="card-img-top" alt="${e.nombre}" loading="lazy" onerror="this.src='/img/exercise-default.svg'">
             <div class="card-img-overlay">
               <span class="badge ${e.hecho ? 'bg-success' : 'bg-primary'}">
                 ${e.hecho ? 'Completado' : (e.dificultad || 'Intermedio')}
@@ -662,15 +760,15 @@ function renderEjerciciosCards(ejerciciosList) {
             
             <div class="form-check mb-3">
               <input class="form-check-input exercise-checkbox" type="checkbox" 
-                id="${e.dia}-ej${i}" ${e.hecho ? "checked" : ""} data-id="${e.nombre}">
-              <label class="form-check-label" for="${e.dia}-ej${i}">
+                id="${e.dia || 'default'}-ej${i}" ${e.hecho ? "checked" : ""} data-id="${e.idejercicio || e.nombre}">
+              <label class="form-check-label" for="${e.dia || 'default'}-ej${i}">
                 ${e.hecho ? 'Completado' : 'Marcar como completado'}
               </label>
             </div>
             
             <div class="card-actions">
               <button class="btn btn-sm btn-primary btn-view" 
-                onclick="abrirModal('${e.nombre}', '${e.descripcion}', '${e.urlVideo}', '${e.dificultad}')">
+                onclick="abrirModal('${e.nombre.replace(/'/g, "\\'")}', '${e.descripcion.replace(/'/g, "\\'")}', '${e.urlvideo || ''}', '${e.dificultad || 'Intermedio'}')">
                 <i class="bi bi-play-circle me-1"></i>
                 Ver ejercicio
               </button>
@@ -688,7 +786,7 @@ function renderEjerciciosCards(ejerciciosList) {
 
 function abrirModal(titulo, descripcion, urlVideo, dificultad) {
   // Obtener el ejercicio completo
-  const ejercicio = ejercicios.find((e) => e.nombre === titulo);
+  const ejercicio = todosLosEjercicios.find((e) => e.nombre === titulo);
   if (!ejercicio) return;
 
   // Actualizar el título
@@ -699,7 +797,7 @@ function abrirModal(titulo, descripcion, urlVideo, dificultad) {
   
   // Actualizar el video
   const videoFrame = document.getElementById("modalVideo");
-  if (urlVideo) {
+  if (urlVideo && urlVideo !== '') {
     videoFrame.src = urlVideo;
   } else {
     videoFrame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Video por defecto
@@ -752,7 +850,7 @@ function abrirModal(titulo, descripcion, urlVideo, dificultad) {
       btnMarcarCompletado.innerHTML = '<span class="loading me-2"></span>Procesando...';
       btnMarcarCompletado.disabled = true;
       
-      const ejercicioActualizado = await toggleEjercicioStatus(titulo);
+      const ejercicioActualizado = await toggleEjercicioStatus(ejercicio.idejercicio || ejercicio.nombre);
       
       if (ejercicioActualizado) {
         updateCompleteButton(btnMarcarCompletado, ejercicioActualizado);
@@ -782,8 +880,8 @@ function updateCompleteButton(button, ejercicio) {
 }
 
 function renderProgresos(container) {
-  const completados = ejercicios.filter((e) => e.hecho).length;
-  const total = ejercicios.length;
+  const completados = todosLosEjercicios.filter((e) => e.hecho).length;
+  const total = todosLosEjercicios.length;
   const porcentaje = total > 0 ? Math.round((completados / total) * 100) : 0;
 
   container.innerHTML = `
@@ -858,7 +956,7 @@ function renderProgresos(container) {
 function renderProgresoPorDia() {
   return diasSemana
     .map((dia) => {
-      const ejerciciosDia = ejercicios.filter((e) => e.dia === dia)
+      const ejerciciosDia = ejerciciosPorDia[dia] || []
       const completados = ejerciciosDia.filter((e) => e.hecho).length
       const total = ejerciciosDia.length
       const porcentaje = total > 0 ? Math.round((completados / total) * 100) : 0
@@ -878,8 +976,8 @@ function renderProgresoPorDia() {
 }
 
 function renderInformeSemanal(container) {
-  const completados = ejercicios.filter((e) => e.hecho).length;
-  const total = ejercicios.length;
+  const completados = todosLosEjercicios.filter((e) => e.hecho).length;
+  const total = todosLosEjercicios.length;
   const porcentajeProgreso = total > 0 ? Math.round((completados / total) * 100) : 0;
 
   container.innerHTML = `

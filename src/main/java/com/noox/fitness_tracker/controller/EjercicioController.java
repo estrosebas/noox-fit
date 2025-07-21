@@ -2,13 +2,17 @@ package com.noox.fitness_tracker.controller;
 
 import com.noox.fitness_tracker.dto.EjercicioDTO;
 import com.noox.fitness_tracker.entity.Ejercicio;
+import com.noox.fitness_tracker.entity.Rutina;
 import com.noox.fitness_tracker.repository.EjercicioRepository;
+import com.noox.fitness_tracker.repository.RutinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,6 +22,9 @@ public class EjercicioController {
 
     @Autowired
     private EjercicioRepository ejercicioRepository;
+
+    @Autowired
+    private RutinaRepository rutinaRepository;
 
     // Helper method to convert Entity to DTO
     private EjercicioDTO convertToDTO(Ejercicio ejercicio) {
@@ -52,6 +59,62 @@ public class EjercicioController {
         return ejercicioRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/con-rutinas")
+    public ResponseEntity<List<Map<String, Object>>> getEjerciciosConRutinas() {
+        try {
+            List<Rutina> rutinas = rutinaRepository.findAll();
+            List<Map<String, Object>> response = rutinas.stream().map(rutina -> {
+                Map<String, Object> ejercicioMap = new HashMap<>();
+                Ejercicio ejercicio = rutina.getEjercicio();
+                
+                ejercicioMap.put("idejercicio", ejercicio.getIdejercicio());
+                ejercicioMap.put("nombre", ejercicio.getNombre());
+                ejercicioMap.put("descripcion", ejercicio.getDescripcion());
+                ejercicioMap.put("imagenurl", ejercicio.getImagenurl());
+                ejercicioMap.put("urlvideo", ejercicio.getUrlvideo());
+                ejercicioMap.put("dificultad", ejercicio.getDificultad());
+                // Datos de la rutina
+                ejercicioMap.put("dia", rutina.getDia());
+                ejercicioMap.put("idrutina", rutina.getIdrutina());
+                ejercicioMap.put("hecho", false); // Por defecto no está hecho
+                
+                return ejercicioMap;
+            }).collect(Collectors.toList());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/rutinas/dia/{dia}")
+    public ResponseEntity<List<Map<String, Object>>> getEjerciciosPorDia(@PathVariable String dia) {
+        try {
+            List<Rutina> rutinas = rutinaRepository.findByDia(dia);
+            List<Map<String, Object>> response = rutinas.stream().map(rutina -> {
+                Map<String, Object> ejercicioMap = new HashMap<>();
+                Ejercicio ejercicio = rutina.getEjercicio();
+                
+                ejercicioMap.put("idejercicio", ejercicio.getIdejercicio());
+                ejercicioMap.put("nombre", ejercicio.getNombre());
+                ejercicioMap.put("descripcion", ejercicio.getDescripcion());
+                ejercicioMap.put("imagenurl", ejercicio.getImagenurl());
+                ejercicioMap.put("urlvideo", ejercicio.getUrlvideo());
+                ejercicioMap.put("dificultad", ejercicio.getDificultad());
+                // Datos de la rutina
+                ejercicioMap.put("dia", rutina.getDia());
+                ejercicioMap.put("idrutina", rutina.getIdrutina());
+                ejercicioMap.put("hecho", false); // Por defecto no está hecho
+                
+                return ejercicioMap;
+            }).collect(Collectors.toList());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("/{id}")
@@ -104,6 +167,46 @@ public class EjercicioController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/rutinas/todos-los-dias")
+    public ResponseEntity<Map<String, Object>> getEjerciciosTodosLosDias() {
+        try {
+            List<Rutina> todasLasRutinas = rutinaRepository.findAll();
+            Map<String, Object> response = new HashMap<>();
+            
+            // Agrupar por días
+            String[] diasSemana = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+            
+            for (String dia : diasSemana) {
+                List<Rutina> rutinasDia = todasLasRutinas.stream()
+                    .filter(r -> r.getDia().equals(dia))
+                    .collect(Collectors.toList());
+                
+                List<Map<String, Object>> ejerciciosDia = rutinasDia.stream().map(rutina -> {
+                    Map<String, Object> ejercicioMap = new HashMap<>();
+                    Ejercicio ejercicio = rutina.getEjercicio();
+                    
+                    ejercicioMap.put("idejercicio", ejercicio.getIdejercicio());
+                    ejercicioMap.put("nombre", ejercicio.getNombre());
+                    ejercicioMap.put("descripcion", ejercicio.getDescripcion());
+                    ejercicioMap.put("imagenurl", ejercicio.getImagenurl());
+                    ejercicioMap.put("urlvideo", ejercicio.getUrlvideo());
+                    ejercicioMap.put("dificultad", ejercicio.getDificultad());
+                    ejercicioMap.put("dia", rutina.getDia());
+                    ejercicioMap.put("idrutina", rutina.getIdrutina());
+                    ejercicioMap.put("hecho", false);
+                    
+                    return ejercicioMap;
+                }).collect(Collectors.toList());
+                
+                response.put(dia, ejerciciosDia);
+            }
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

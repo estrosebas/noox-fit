@@ -28,6 +28,14 @@ public class Ejercicio {
     public Ejercicio() {
     }
 
+    public Ejercicio(String nombre, String descripcion, String imagenurl, String urlvideo, String dificultad) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.imagenurl = imagenurl;
+        this.urlvideo = urlvideo;
+        this.dificultad = dificultad;
+    }
+
     // Getters and Setters
 
     public Long getIdejercicio() {
