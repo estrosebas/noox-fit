@@ -801,8 +801,9 @@ function renderEjerciciosCards(ejerciciosList) {
                 Ver ejercicio
               </button>
               <button class="btn btn-sm btn-outline-light" 
-                data-bs-toggle="tooltip" title="Editar ejercicio">
-                <i class="bi bi-pencil"></i>
+                onclick="eliminarEjercicioDeRutina(${e.idrutina}, '${e.nombre.replace(/'/g, "\\'")}', '${e.dia}')"
+                data-bs-toggle="tooltip" title="Eliminar ejercicio de la rutina">
+                <i class="bi bi-trash"></i>
               </button>
             </div>
           </div>
@@ -1312,6 +1313,46 @@ async function agregarEjercicioARutina() {
       btnAgregar.innerHTML = '<i class="bi bi-plus-lg me-2"></i>Agregar a Rutina';
       btnAgregar.disabled = false;
     }
+  }
+}
+
+// Función para eliminar un ejercicio de la rutina
+async function eliminarEjercicioDeRutina(idRutina, nombreEjercicio, dia) {
+  if (!checkAuthentication()) return;
+  
+  // Mostrar confirmación
+  const confirmacion = confirm(`¿Estás seguro de que quieres eliminar "${nombreEjercicio}" de la rutina del ${dia}?`);
+  if (!confirmacion) return;
+  
+  try {
+    const response = await fetch(`/api/ejercicios/rutina/${idRutina}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al eliminar ejercicio');
+    }
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast(`Ejercicio "${nombreEjercicio}" eliminado de la rutina exitosamente`, 'success');
+      
+      // Recargar ejercicios para actualizar la UI
+      await cargarEjercicios();
+      
+      // Recargar la vista del día actual
+      loadRutinaDia(dia);
+      
+    } else {
+      throw new Error(data.message || 'Error desconocido');
+    }
+    
+  } catch (error) {
+    console.error('Error al eliminar ejercicio:', error);
+    showToast(`Error al eliminar ejercicio: ${error.message}`, 'error');
   }
 }
 
