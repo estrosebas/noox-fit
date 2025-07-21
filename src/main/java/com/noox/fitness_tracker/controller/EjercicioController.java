@@ -1,8 +1,10 @@
 package com.noox.fitness_tracker.controller;
 
 import com.noox.fitness_tracker.dto.EjercicioDTO;
+import com.noox.fitness_tracker.entity.Cuenta;
 import com.noox.fitness_tracker.entity.Ejercicio;
 import com.noox.fitness_tracker.entity.Rutina;
+import com.noox.fitness_tracker.repository.CuentaRepository;
 import com.noox.fitness_tracker.repository.EjercicioRepository;
 import com.noox.fitness_tracker.repository.RutinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class EjercicioController {
 
     @Autowired
     private RutinaRepository rutinaRepository;
+
+    @Autowired
+    private CuentaRepository cuentaRepository;
 
     // Helper method to convert Entity to DTO
     private EjercicioDTO convertToDTO(Ejercicio ejercicio) {
@@ -207,6 +212,86 @@ public class EjercicioController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // Endpoint para obtener todos los ejercicios disponibles
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<EjercicioDTO>> obtenerEjerciciosDisponibles() {
+        try {
+            List<Ejercicio> ejercicios = ejercicioRepository.findAll();
+            List<EjercicioDTO> ejerciciosDTO = ejercicios.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(ejerciciosDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // Endpoint para agregar un ejercicio a una rutina
+    @PostMapping("/agregar-a-rutina")
+    public ResponseEntity<Map<String, Object>> agregarEjercicioARutina(@RequestBody Map<String, Object> request) {
+        try {
+            Long idEjercicio = Long.valueOf(request.get("idEjercicio").toString());
+            String dia = (String) request.get("dia");
+            Long idCuenta = Long.valueOf(request.get("idCuenta").toString());
+
+            if (idEjercicio == null || dia == null || idCuenta == null) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Faltan parámetros requeridos");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+
+            // Verificar que el ejercicio existe
+            Optional<Ejercicio> ejercicioOpt = ejercicioRepository.findById(idEjercicio);
+            if (!ejercicioOpt.isPresent()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Ejercicio no encontrado");
+                return ResponseEntity.notFound().build();
+            }
+
+            // Verificar que la cuenta existe
+            Optional<Cuenta> cuentaOpt = cuentaRepository.findById(idCuenta);
+            if (!cuentaOpt.isPresent()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Cuenta no encontrada");
+                return ResponseEntity.notFound().build();
+            }
+
+            Ejercicio ejercicio = ejercicioOpt.get();
+            Cuenta cuenta = cuentaOpt.get();
+
+            // Crear nueva rutina
+            Rutina nuevaRutina = new Rutina();
+            nuevaRutina.setEjercicio(ejercicio);
+            nuevaRutina.setDia(dia);
+            nuevaRutina.setCuenta(cuenta);
+
+            // Guardar la rutina
+            Rutina rutinaGuardada = rutinaRepository.save(nuevaRutina);
+
+            // Preparar respuesta
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Ejercicio agregado a la rutina exitosamente");
+            response.put("rutina", Map.of(
+                "idrutina", rutinaGuardada.getIdrutina(),
+                "dia", rutinaGuardada.getDia(),
+                "ejercicio", Map.of(
+                    "idejercicio", ejercicio.getIdejercicio(),
+                    "nombre", ejercicio.getNombre(),
+                    "descripcion", ejercicio.getDescripcion(),
+                    "dificultad", ejercicio.getDificultad()
+                )
+            ));
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }

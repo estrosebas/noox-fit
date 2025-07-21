@@ -669,7 +669,7 @@ function loadRutinaDia(dia) {
                 <i class="bi bi-arrow-up-down"></i>
                 <span class="d-none d-sm-inline ms-1">Ordenar</span>
               </button>
-              <button class="btn btn-sm btn-primary shadow-glow" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio">
+              <button class="btn btn-sm btn-primary shadow-glow" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio" onclick="preseleccionarDia('${dia}')">
                 <i class="bi bi-plus-lg"></i>
                 <span class="d-none d-sm-inline ms-1">Agregar</span>
               </button>
@@ -717,7 +717,7 @@ function renderEmptyState(dia) {
         </div>
         <h4 class="text-light mb-3">No hay ejercicios para ${dia}</h4>
         <p class="text-light-dark mb-4">Comienza agregando algunos ejercicios para este día</p>
-        <button class="btn btn-primary px-4 py-2 shadow-glow" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio">
+        <button class="btn btn-primary px-4 py-2 shadow-glow" data-bs-toggle="modal" data-bs-target="#modalAgregarEjercicio" onclick="preseleccionarDia('${dia}')">
           <i class="bi bi-plus-lg me-2"></i>
           Agregar primer ejercicio
         </button>
@@ -1149,3 +1149,191 @@ function logout() {
   // Redirigir al login
   window.location.href = '/login';
 }
+
+// Variables globales para ejercicios disponibles
+let ejerciciosDisponibles = [];
+
+// Función para cargar ejercicios disponibles
+async function cargarEjerciciosDisponibles() {
+  if (!checkAuthentication()) return;
+  
+  try {
+    const response = await fetch('/api/ejercicios/disponibles', {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      throw new Error('Error al cargar ejercicios disponibles');
+    }
+    
+    ejerciciosDisponibles = await response.json();
+    console.log('Ejercicios disponibles cargados:', ejerciciosDisponibles.length);
+    
+    // Llenar el select del modal
+    llenarSelectEjercicios();
+    
+  } catch (error) {
+    console.error('Error al cargar ejercicios disponibles:', error);
+    showToast('Error al cargar la lista de ejercicios', 'error');
+  }
+}
+
+// Función para llenar el select de ejercicios en el modal
+function llenarSelectEjercicios() {
+  const selectEjercicio = document.getElementById('selectEjercicio');
+  if (!selectEjercicio) return;
+  
+  // Limpiar opciones anteriores
+  selectEjercicio.innerHTML = '<option value="">Seleccionar ejercicio...</option>';
+  
+  // Agregar ejercicios disponibles
+  ejerciciosDisponibles.forEach(ejercicio => {
+    const option = document.createElement('option');
+    option.value = ejercicio.idejercicio;
+    option.textContent = ejercicio.nombre;
+    option.setAttribute('data-descripcion', ejercicio.descripcion);
+    option.setAttribute('data-imagen', ejercicio.imagenurl || '/img/exercise-default.svg');
+    option.setAttribute('data-dificultad', ejercicio.dificultad || 'Intermedio');
+    selectEjercicio.appendChild(option);
+  });
+  
+  // Agregar event listener para mostrar vista previa
+  selectEjercicio.addEventListener('change', mostrarVistaPrevia);
+}
+
+// Función para mostrar vista previa del ejercicio seleccionado
+function mostrarVistaPrevia() {
+  const selectEjercicio = document.getElementById('selectEjercicio');
+  const exercisePreview = document.getElementById('exercisePreview');
+  const selectedOption = selectEjercicio.selectedOptions[0];
+  
+  if (selectedOption && selectedOption.value) {
+    // Obtener datos del ejercicio
+    const nombre = selectedOption.textContent;
+    const descripcion = selectedOption.getAttribute('data-descripcion');
+    const imagen = selectedOption.getAttribute('data-imagen');
+    const dificultad = selectedOption.getAttribute('data-dificultad');
+    
+    // Actualizar elementos de vista previa
+    document.getElementById('previewName').textContent = nombre;
+    document.getElementById('previewDescription').textContent = descripcion.substring(0, 100) + (descripcion.length > 100 ? '...' : '');
+    document.getElementById('previewImage').src = imagen;
+    document.getElementById('previewDifficulty').textContent = `Dificultad: ${dificultad}`;
+    
+    // Mostrar vista previa
+    exercisePreview.style.display = 'block';
+  } else {
+    // Ocultar vista previa
+    exercisePreview.style.display = 'none';
+  }
+}
+
+// Función para agregar ejercicio a la rutina
+async function agregarEjercicioARutina() {
+  if (!checkAuthentication()) return;
+  
+  const selectEjercicio = document.getElementById('selectEjercicio');
+  const selectDiaSemana = document.getElementById('selectDiaSemana');
+  
+  const idEjercicio = selectEjercicio.value;
+  const dia = selectDiaSemana.value;
+  
+  // Validaciones
+  if (!idEjercicio) {
+    showToast('Por favor selecciona un ejercicio', 'error');
+    return;
+  }
+  
+  if (!dia) {
+    showToast('Por favor selecciona un día de la semana', 'error');
+    return;
+  }
+  
+  // Obtener idCuenta del usuario (por ahora usar 1 para desarrollo)
+  const idCuenta = 1; // TODO: Obtener del token JWT o sesión
+  
+  try {
+    // Mostrar loading
+    const btnAgregar = document.querySelector('[onclick="agregarEjercicioARutina()"]');
+    const originalText = btnAgregar.innerHTML;
+    btnAgregar.innerHTML = '<span class="loading me-2"></span>Agregando...';
+    btnAgregar.disabled = true;
+    
+    const response = await fetch('/api/ejercicios/agregar-a-rutina', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        idEjercicio: parseInt(idEjercicio),
+        dia: dia,
+        idCuenta: idCuenta
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al agregar ejercicio');
+    }
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('Ejercicio agregado exitosamente a la rutina', 'success');
+      
+      // Cerrar modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarEjercicio'));
+      modal.hide();
+      
+      // Limpiar formulario
+      selectEjercicio.value = '';
+      selectDiaSemana.value = '';
+      document.getElementById('exercisePreview').style.display = 'none';
+      
+      // Recargar ejercicios para actualizar la UI
+      await cargarEjercicios();
+      
+      // Actualizar la vista del día actual o cargar el día recién agregado
+      if (currentDay === dia) {
+        loadRutinaDia(dia);
+      } else {
+        loadRutinaDia(dia);
+      }
+      
+    } else {
+      throw new Error(data.message || 'Error desconocido');
+    }
+    
+  } catch (error) {
+    console.error('Error al agregar ejercicio:', error);
+    showToast(`Error al agregar ejercicio: ${error.message}`, 'error');
+  } finally {
+    // Restaurar botón
+    const btnAgregar = document.querySelector('[onclick="agregarEjercicioARutina()"]');
+    if (btnAgregar) {
+      btnAgregar.innerHTML = '<i class="bi bi-plus-lg me-2"></i>Agregar a Rutina';
+      btnAgregar.disabled = false;
+    }
+  }
+}
+
+// Función para preseleccionar el día en el modal
+function preseleccionarDia(dia) {
+  setTimeout(() => {
+    const selectDiaSemana = document.getElementById('selectDiaSemana');
+    if (selectDiaSemana && dia) {
+      selectDiaSemana.value = dia;
+    }
+  }, 100);
+}
+
+// Event listener para cuando se abre el modal
+document.addEventListener('DOMContentLoaded', function() {
+  const modalAgregarEjercicio = document.getElementById('modalAgregarEjercicio');
+  if (modalAgregarEjercicio) {
+    modalAgregarEjercicio.addEventListener('show.bs.modal', function() {
+      // Cargar ejercicios disponibles si no están cargados
+      if (ejerciciosDisponibles.length === 0) {
+        cargarEjerciciosDisponibles();
+      }
+    });
+  }
+});
