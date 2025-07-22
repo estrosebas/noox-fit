@@ -6,6 +6,7 @@ import com.noox.fitness_tracker.entity.Cuenta;
 import com.noox.fitness_tracker.entity.Usuario;
 import com.noox.fitness_tracker.repository.CuentaRepository;
 import com.noox.fitness_tracker.repository.UsuarioRepository;
+import com.noox.fitness_tracker.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-// Removed RestController, using Controller for Thymeleaf views
-// import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Controller // Changed from @RestController to handle Thymeleaf views
-// @RequestMapping("/api/cuentas") // Keep this for API, add new one for pages or move this
+@Controller
 public class CuentaController {
 
     @Autowired
@@ -33,6 +31,9 @@ public class CuentaController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthService authService;
 
     // --- Page Endpoints ---
 
@@ -58,22 +59,14 @@ public class CuentaController {
         }
         if (registrationForm.getCorreo() == null || registrationForm.getCorreo().isEmpty()) {
             bindingResult.rejectValue("correo", "error.registrationForm", "Email is required.");
-        } else if (cuentaRepository.findByCorreo(registrationForm.getCorreo()).isPresent()) {
-            // It seems findByCorreo doesn't exist on JpaRepository by default.
-            // This check needs a custom method in CuentaRepository or a different approach.
-            // For now, let's assume a simple check. A better way is to add:
-            // Optional<Cuenta> findByCorreo(String correo); to CuentaRepository
-            // For the purpose of this step, we'll add a placeholder error if email is "test@test.com"
-            // if ("test@test.com".equals(registrationForm.getCorreo())) { // Placeholder for actual DB check
-            //    bindingResult.rejectValue("correo", "error.registrationForm", "Email already exists."); // Use i18n key later
-            // }
-            // Using the actual findByCorreo method
-            if (cuentaRepository.findByCorreo(registrationForm.getCorreo()).isPresent()) {
-                bindingResult.rejectValue("correo", "register.error.emailExists", "Email already exists. Please choose another one.");
-            }
+        } else if (authService.emailExists(registrationForm.getCorreo())) {
+            bindingResult.rejectValue("correo", "register.error.emailExists", "Email already exists. Please choose another one.");
         }
+        // Validación de contraseña
         if (registrationForm.getPassword() == null || registrationForm.getPassword().isEmpty()) {
             bindingResult.rejectValue("password", "error.registrationForm", "Password is required.");
+        } else if (!authService.isPasswordValid(registrationForm.getPassword())) {
+            bindingResult.rejectValue("password", "error.registrationForm", "Password must be at least 6 characters long.");
         }
 
         // Add more validation for password strength, email format, etc.
@@ -83,21 +76,28 @@ public class CuentaController {
             return "register"; // Return to registration page with errors
         }
 
-        // Create Usuario
-        Usuario usuario = new Usuario();
-        usuario.setNombre(registrationForm.getNombre());
-        usuario.setApellido(registrationForm.getApellido());
-        usuario.setEdad(registrationForm.getEdad());
-        usuario.setDireccion(registrationForm.getDireccion());
-        usuario.setSexo(registrationForm.getSexo());
-        usuario = usuarioRepository.save(usuario);
-
-        // Create Cuenta
-        Cuenta cuenta = new Cuenta();
-        cuenta.setUsuario(usuario);
-        cuenta.setCorreo(registrationForm.getCorreo());
-        cuenta.setContraseña(passwordEncoder.encode(registrationForm.getPassword()));
-        cuentaRepository.save(cuenta);
+        // Usar AuthService para registrar usuario
+        try {
+            boolean registroExitoso = authService.registerUser(
+                registrationForm.getNombre(),
+                registrationForm.getApellido(),
+                registrationForm.getEdad(),
+                registrationForm.getDireccion(),
+                registrationForm.getSexo(),
+                registrationForm.getCorreo(),
+                registrationForm.getPassword()
+            );
+            
+            if (!registroExitoso) {
+                bindingResult.rejectValue("correo", "register.error.emailExists", "Email already exists. Please choose another one.");
+                model.addAttribute("registrationForm", registrationForm);
+                return "register";
+            }
+        } catch (Exception e) {
+            bindingResult.rejectValue("correo", "register.error.general", "Error occurred during registration. Please try again.");
+            model.addAttribute("registrationForm", registrationForm);
+            return "register";
+        }
 
         return "redirect:/login?registrationSuccess"; // Redirect to login with a success parameter
     }
@@ -193,6 +193,7 @@ public class CuentaController {
         return new CuentaDTO(
                 cuenta.getIdcuenta(),
                 cuenta.getUsuario().getIdusuario(),
+                cuenta.getRol().getId(),
                 cuenta.getCorreo(),
                 null, // Password not exposed
                 cuenta.getCreated(),

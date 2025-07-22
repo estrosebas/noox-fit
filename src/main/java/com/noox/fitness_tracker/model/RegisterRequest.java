@@ -1,52 +1,70 @@
 package com.noox.fitness_tracker.model;
 
 public class RegisterRequest {
-    private String fullName;
-    private String email;
-    private String password;
-    private String country;
-    private String gender;
+    private String nombre;
+    private String apellido;
+    private Integer edad;
+    private String correo;
+    private String contraseña;
+    private String direccion;
+    private String sexo;
     private boolean termsAccepted;
 
     // Getters and Setters
-    public String getFullName() {
-        return fullName;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getEmail() {
-        return email;
+    public String getApellido() {
+        return apellido;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
-    public String getPassword() {
-        return password;
+    public Integer getEdad() {
+        return edad;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEdad(Integer edad) {
+        this.edad = edad;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public String getGender() {
-        return gender;
+    public String getContraseña() {
+        return contraseña;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
     }
 
     public boolean isTermsAccepted() {
@@ -60,10 +78,12 @@ public class RegisterRequest {
     @Override
     public String toString() {
         return "RegisterRequest{" +
-                "fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", country='" + country + '\'' +
-                ", gender='" + gender + '\'' +
+                "nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", edad=" + edad +
+                ", correo='" + correo + '\'' +
+                ", direccion='" + direccion + '\'' +
+                ", sexo='" + sexo + '\'' +
                 ", termsAccepted=" + termsAccepted +
                 // Not logging password for security
                 '}';

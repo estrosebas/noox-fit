@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.Authentication;
 import com.noox.fitness_tracker.model.Contact;
 import com.noox.fitness_tracker.model.Promotion;
 import com.noox.fitness_tracker.dto.ContactoDTO;
@@ -38,7 +39,12 @@ public class MainController {
     }
 
     @GetMapping("/user")
-    public String user() {
+    public String user(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            model.addAttribute("userEmail", email);
+            // Aquí podrías agregar más información del usuario si es necesario
+        }
         return "user";
     }
 
@@ -51,29 +57,23 @@ public class MainController {
     }    
     @GetMapping("/api/promotions")
     @ResponseBody
-    public List<Promotion> getPromotions(Locale locale) {
-        // Determine if we should use Spanish or English
-        boolean isSpanish = locale.getLanguage().equals("es");
-
+    public List<Promotion> getPromotions() {
         return Arrays.asList(
             new Promotion(
-                isSpanish ? "Especial de Verano" : "Summer Special",
-                isSpanish ? "¡Ponte en forma para el verano! Descuento especial en membresías anuales" 
-                         : "Get fit for summer! Special discount on annual memberships",
+                "promotion.summer.title",
+                "promotion.summer.description",
                 "25%",
                 "2025-08-31"
             ),
             new Promotion(
-                isSpanish ? "Oferta para Nuevos Miembros" : "New Member Offer",
-                isSpanish ? "¡Únete ahora y obtén tu primer mes gratis!" 
-                         : "Join now and get your first month free",
+                "promotion.new.member.title",
+                "promotion.new.member.description",
                 "100%",
                 "2025-12-31"
             ),
             new Promotion(
-                isSpanish ? "Trae un Amigo" : "Bring a Friend",
-                isSpanish ? "Refiere a un amigo y ambos obtienen un descuento en planes mensuales" 
-                         : "Refer a friend and both get a discount on monthly plans",
+                "promotion.bring.friend.title",
+                "promotion.bring.friend.description",
                 "15%",
                 "2025-06-30"
             )

@@ -8,189 +8,115 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" th:href="@{/css/login-and-register.css}" />
 </head>
-<body>
+<body class="bg-dark text-light">
     <div class="container py-5">
-        <div class="form-container">
+        <div class="form-container bg-black p-4 rounded-3">
             <h2 class="text-center mb-4" th:text="#{register.header}">Register</h2>
 
-            <!-- Success Message -->
-            <div class="alert alert-success" th:if="${param.registrationSuccess}" th:text="#{register.success}">
-                Registration successful! Please login.
-            </div>
+            <div id="error-message" class="alert alert-danger d-none"></div>
+            <div id="success-message" class="alert alert-success d-none"></div>
 
-            <form id="registerForm" th:action="@{/register}" method="post" th:object="${registrationForm}">
-                <!-- CSRF token will be automatically included by thymeleaf-extras-springsecurity6 -->
-                
-                <!-- General Errors (Not bound to a specific field) -->
-                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-                    <ul>
-                        <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Global Error</li>
-                    </ul>
-                </div>
-
-                <!-- 1. Input de texto (Nombre) -->
+            <form id="registerForm">
                 <div class="mb-3">
-                    <label for="fullname" class="form-label" th:text="#{register.fullname}">Full Name</label>
-                    <input type="text" class="form-control" id="fullname" th:field="*{nombre}" required="required" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Name Error</div>
+                    <label for="nombre" class="form-label" th:text="#{register.fullname}">Full Name</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" id="nombre" required />
                 </div>
-
-                <!-- Apellido -->
                 <div class="mb-3">
                     <label for="apellido" class="form-label" th:text="#{register.label.apellido}">Last Name</label>
-                    <input type="text" class="form-control" id="apellido" th:field="*{apellido}" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}">Last Name Error</div>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" id="apellido" />
                 </div>
-
-                <!-- Edad -->
                 <div class="mb-3">
                     <label for="edad" class="form-label" th:text="#{register.label.edad}">Age</label>
-                    <input type="number" class="form-control" id="edad" th:field="*{edad}" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('edad')}" th:errors="*{edad}">Age Error</div>
+                    <input type="number" class="form-control bg-dark text-light border-secondary" id="edad" />
                 </div>
-
-                <!-- Direccion -->
                 <div class="mb-3">
                     <label for="direccion" class="form-label" th:text="#{register.label.direccion}">Address</label>
-                    <input type="text" class="form-control" id="direccion" th:field="*{direccion}" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}">Address Error</div>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" id="direccion" />
                 </div>
-
-                <!-- Email -->
                 <div class="mb-3">
                     <label for="email" class="form-label" th:text="#{register.email}">Email</label>
-                    <input type="email" class="form-control" id="email" th:field="*{correo}" required="required" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}">Email Error</div>
+                    <input type="email" class="form-control bg-dark text-light border-secondary" id="email" required />
                 </div>
-
-                <!-- Password -->
                 <div class="mb-3">
                     <label for="password" class="form-label" th:text="#{register.password}">Password</label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}" aria-describedby="passwordHelp" required="required" />
-                    <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+                    <input type="password" class="form-control bg-dark text-light border-secondary" id="password" required />
                 </div>
-
-                <!-- Sexo (Gender) -->
                 <div class="mb-3">
                     <label class="form-label" th:text="#{register.gender}">Gender</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderMale" value="male" required="required" />
+                        <input class="form-check-input" type="radio" name="sexo" id="genderMale" value="male" required />
                         <label class="form-check-label" for="genderMale" th:text="#{register.gender.male}">Male</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" th:field="*{sexo}" id="genderFemale" value="female" />
+                        <input class="form-check-input" type="radio" name="sexo" id="genderFemale" value="female" />
                         <label class="form-check-label" for="genderFemale" th:text="#{register.gender.female}">Female</label>
                     </div>
-                    <div class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}">Gender Error</div>
                 </div>
-
-                <!-- Country - This field is not in RegistrationForm DTO. -->
-                <div class="mb-3">
-                    <label for="country" class="form-label" th:text="#{register.country}">Country</label>
-                    <select class="form-select" id="country">
-                        <option selected="selected" disabled="disabled" value="" th:text="#{register.country.select}">Select...</option>
-                        <option value="MX" th:text="#{register.country.mexico}">Mexico</option>
-                        <option value="CO" th:text="#{register.country.colombia}">Colombia</option>
-                        <option value="PE" th:text="#{register.country.peru}">Perú</option>
-                        <option value="AR" th:text="#{register.country.argentina}">Argentina</option>
-                        <option value="CL" th:text="#{register.country.chile}">Chile</option>
-                        <option value="US" th:text="#{register.country.usa}">United States</option>
-                        <option value="ES" th:text="#{register.country.spain}">Spain</option>}
-                        <option value="BR" th:text="#{register.country.brazil}">Brazil</option>
-                        <option value="FR" th:text="#{register.country.france}">France</option>
-                        <option value="DE" th:text="#{register.country.germany}">Germany</option>
-                        <option value="IT" th:text="#{register.country.italy}">Italy</option>
-                        <option value="JP" th:text="#{register.country.japan}">Japan</option>
-                    </select>
-                </div>
-
-                <!-- Terms and conditions checkbox - also not in RegistrationForm DTO -->
                 <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="terms" />
+                    <input type="checkbox" class="form-check-input" id="terms" required />
                     <label class="form-check-label" for="terms" th:text="#{register.terms}">I accept the terms and conditions</label>
                 </div>
-
-                <!-- 7. Botón de submit -->
                 <button type="submit" class="btn btn-success w-100 mb-3" th:text="#{register.submit}">Register</button>
-
-                <!-- 8. Botón para trigger del modal -->
-                <button type="button" class="btn btn-outline-info w-100" data-bs-toggle="modal" data-bs-target="#termsModal" th:text="#{register.view.terms}">
-                    View terms and conditions
-                </button>
             </form>
-
-            <!-- 9. Alert (Mensaje de éxito/error) -->
-            <div class="alert alert-warning mt-3 d-none" id="formAlert" th:text="#{register.alert.complete}">
-                Please complete all fields!
-            </div>
-
-            <!-- 10. Enlace de switch -->
-            <div class="form-switch mt-3">
+            <div class="form-switch mt-3 text-center">
                 <span th:text="#{register.have.account}">Already have an account?</span> 
                 <a th:href="@{/login}" th:text="#{register.login.link}">Login</a>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Bootstrap (Diálogo) -->
-    <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{register.modal.title}">Terms and Conditions</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p th:text="#{register.modal.content}">Sample text for terms. You must accept them to register.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{register.modal.close}">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Registration Confirmation Modal -->
-    <div class="modal fade" id="registerConfirmationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{register.confirm.title}">Confirm Registration</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p th:text="#{register.confirm.message}">Please confirm your registration details:</p>
-                    <div class="preview-data">
-                        <strong th:text="#{register.fullname}">Name</strong>: <span id="previewRegisterName"></span><br />
-                        <strong th:text="#{register.email}">Email</strong>: <span id="previewRegisterEmail"></span><br />
-                        <strong th:text="#{register.country}">Country</strong>: <span id="previewRegisterCountry"></span><br />
-                        <strong th:text="#{register.gender}">Gender</strong>: <span id="previewRegisterGender"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{register.confirm.cancel}">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="submitRegisterForm()" th:text="#{register.confirm.submit}">Register</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Registration Success Modal -->
-    <div class="modal fade" id="registerSuccessModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" th:text="#{register.success.title}">Success!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p th:text="#{register.success.message}">Registration successful! Redirecting to login page...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script de Bootstrap (necesario para el modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const edad = document.getElementById('edad').value;
+            const direccion = document.getElementById('direccion').value;
+            const correo = document.getElementById('email').value;
+            const contraseña = document.getElementById('password').value;
+            const sexo = document.querySelector('input[name="sexo"]:checked').value;
+            const termsAccepted = document.getElementById('terms').checked;
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+
+            fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    apellido,
+                    edad,
+                    direccion,
+                    correo,
+                    contraseña,
+                    sexo,
+                    termsAccepted
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(data => {
+                successMessage.textContent = 'Registration successful! Redirecting to login...';
+                successMessage.classList.remove('d-none');
+                errorMessage.classList.add('d-none');
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            })
+            .catch(error => {
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.classList.remove('d-none');
+                successMessage.classList.add('d-none');
+            });
+        });
+    </script>
 </body>
 </html>

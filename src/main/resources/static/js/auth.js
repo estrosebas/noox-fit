@@ -3,11 +3,11 @@ function handleLoginSubmit(event) {
     event.preventDefault();
     
     // Get form data
-    const email = document.getElementById('email').value;
+    const correo = document.getElementById('correo').value;
     const password = document.getElementById('password').value;
 
     // Update preview in confirmation modal
-    document.getElementById('previewLoginEmail').textContent = email;
+    document.getElementById('previewLoginEmail').textContent = correo;
 
     // Show confirmation modal
     const confirmationModal = new bootstrap.Modal(document.getElementById('loginConfirmationModal'));
@@ -19,8 +19,8 @@ function handleLoginSubmit(event) {
 function submitLoginForm() {
     // Get form data
     const formData = {
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value
+        correo: document.getElementById('correo').value,
+        contraseña: document.getElementById('password').value
     };
 
     // Send data to backend
@@ -105,11 +105,13 @@ function handleRegisterSubmit(event) {
 function submitRegisterForm() {
     // Get form data
     const formData = {
-        fullName: document.getElementById('fullname').value,
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-        country: document.getElementById('country').value,
-        gender: document.querySelector('input[name="gender"]:checked').value,
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        edad: parseInt(document.getElementById('edad').value),
+        correo: document.getElementById('correo').value,
+        contraseña: document.getElementById('password').value,
+        direccion: document.getElementById('direccion').value,
+        sexo: document.querySelector('input[name="sexo"]:checked')?.value,
         termsAccepted: document.getElementById('terms').checked
     };
 

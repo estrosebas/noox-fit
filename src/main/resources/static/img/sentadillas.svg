@@ -1,0 +1,10 @@
+<!-- Sentadillas placeholder -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#2a2a2a"/>
+  <circle cx="200" cy="100" r="25" fill="#e74c3c"/>
+  <rect x="180" y="120" width="40" height="80" rx="5" fill="#e74c3c"/>
+  <rect x="170" y="190" width="60" height="40" rx="5" fill="#e74c3c"/>
+  <rect x="165" y="220" width="20" height="50" fill="#e74c3c"/>
+  <rect x="215" y="220" width="20" height="50" fill="#e74c3c"/>
+  <text x="200" y="290" text-anchor="middle" fill="#ccc" font-family="Arial" font-size="16" font-weight="bold">SENTADILLAS</text>
+</svg>

@@ -1,0 +1,9 @@
+<!-- Flexiones placeholder -->
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#2a2a2a"/>
+  <rect x="50" y="120" width="300" height="60" rx="30" fill="#4a90e2"/>
+  <circle cx="100" cy="150" r="15" fill="#fff"/>
+  <circle cx="300" cy="150" r="15" fill="#fff"/>
+  <rect x="180" y="140" width="40" height="20" rx="10" fill="#fff"/>
+  <text x="200" y="240" text-anchor="middle" fill="#ccc" font-family="Arial" font-size="16" font-weight="bold">FLEXIONES</text>
+</svg>
